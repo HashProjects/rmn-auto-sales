@@ -1,5 +1,5 @@
 ```bash
-pip install tkinter ttkwidgets tksheet
+pip install tkinter ttkwidgets tksheet mysql-connector-python
 ```
 
 Run:

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.25, for Linux (x86_64)
 --
--- Host: localhost    Database: rmn_auto_sales
+-- Host: 127.0.0.1    Database: rmn_auto_sales
 -- ------------------------------------------------------
--- Server version	8.0.28
+-- Server version	8.0.27-0ubuntu0.21.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `customer`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer` (
   `customer_id` int NOT NULL AUTO_INCREMENT,
-  `customer_phone` int NOT NULL,
+  `customer_phone` varchar(45) NOT NULL,
   `customer_last_name` varchar(45) NOT NULL,
   `customer_first_name` varchar(45) NOT NULL,
   `customer_address` varchar(45) NOT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE `customer` (
   `customer_zip` int NOT NULL,
   `customer_gender` varchar(10) NOT NULL,
   `customer_dob` varchar(45) NOT NULL,
-  `customer_taxpayer_id` int NOT NULL,
+  `customer_taxpayer_id` varchar(45) NOT NULL,
   PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +44,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES (1,'789-851-5134N4','Harris','Donald','33546 Mockingbird Road','Irvine','Fountain Valley',10000,'Male','13-28-1992','933-88-8319'),(2,'835-233-6883N14','Harris','Donald','53941 Martin Luther King Jr Lane','Newport Beach','Florida',10000,'Male','4-13-1970','226-31-3603'),(3,'247-852-3109','Smith','Donald','54351 Martin Luther King Jr Lane','Orange','California',10000,'Male','8-9-1972','725-23-2490'),(4,'254-194-6217','Harris','Mohit','16992 Martin Luther King Jr Road','Fullerton','Texas',10000,'Female','5-10-1998','102-21-5760'),(5,'804-842-4352','Harris','Kamala','45519 Wayne Street Street','Newport Beach','Nevada',10000,'Male','3-30-1972','538-93-1065'),(6,'234-786-8740','Trump','Loan','78082 Mockingbird Lane','Irvine','Fountain Valley',10000,'Female','3-26-1977','467-72-1014'),(7,'779-866-6385','Smith','Loan','19522 Wayne Street Lane','Irvine','Florida',10000,'Female','3-9-1994','443-20-8218'),(8,'871-482-1944','Harris','Ted','91329 Wayne Street Street','Fountain Valley','Nevada',10000,'Male','5-19-1988','495-56-5038'),(9,'432-502-6409','Nyugen','Kamala','94994 Martin Luther King Jr Street','Placentia','Texas',10000,'Female','1-8-1990','930-46-9491'),(10,'500-266-2041','Newsome','Kamala','96422 Martin Luther King Jr Lane','Orange','Fountain Valley',10000,'Female','1-24-1999','721-99-9752'),(11,'205-209-5101','Smith','Sammy','18645 Martin Luther King Jr Street','Irvine','Nevada',10000,'Female','1-23-1990','441-63-9351'),(12,'936-929-4512','Johnson','Loan','49967 Mockingbird Lane','Irvine','California',10000,'Female','7-29-1974','280-49-3866'),(13,'457-552-8813','Newsome','Loan','92748 Martin Luther King Jr Lane','Orange','Texas',10000,'Male','10-2-1987','687-78-5871'),(14,'141-299-1246','Newsome','Eric','16991 Wayne Street Road','Placentia','Fountain Valley',10000,'Male','2-31-1971','876-14-6154'),(15,'663-881-7673','Nyugen','Mohit','6699 Martin Luther King Jr Street','Irvine','Texas',10000,'Male','6-16-1987','751-43-8280'),(16,'794-113-6247','Newsome','Kamala','23028 Wayne Street Blvd','Orange','Fountain Valley',10000,'Male','6-22-1977','959-85-5222');
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-09 16:40:02
+-- Dump completed on 2022-04-16 23:30:50

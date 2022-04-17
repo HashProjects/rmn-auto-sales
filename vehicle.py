@@ -1,0 +1,35 @@
+import mysql.connector
+import random
+
+
+class Vehicle:
+    @classmethod
+    def fromNamedTuple(cls, vehicle_info):
+        return cls(vehicle_info.vehicle_id, vehicle_info.vehicle_vin, vehicle_info[2], vehicle_info[3], vehicle_info[4],
+                   vehicle_info[5], vehicle_info[6], vehicle_info[7], vehicle_info[8], vehicle_info[9],
+                   vehicle_info[10], vehicle_info[11], vehicle_info[12])
+
+    def __init__(self,
+                 vehicle_id, vehicle_vin, vehicle_make, vehicle_model, vehicle_year, vehicle_color, vehicle_miles,
+                 vehicle_condition, vehicle_style, vehicle_interior_color, vehicle_list_price, vehicle_sale_price,
+                 vehicle_sold=0):
+        self.vehicle_id = vehicle_id
+        self.vehicle_vin = vehicle_vin
+        self.vehicle_make = vehicle_make
+        self.vehicle_model = vehicle_model
+        self.vehicle_year = vehicle_year
+        self.vehicle_color = vehicle_color
+        self.vehicle_miles = vehicle_miles
+        self.vehicle_condition = vehicle_condition
+        self.vehicle_style = vehicle_style
+        self.vehicle_interior_color = vehicle_interior_color
+        self.vehicle_list_price = vehicle_list_price
+        self.vehicle_sale_price = vehicle_sale_price
+        self.vehicle_sold = vehicle_sold
+
+    def __str__(self):
+        return "Vehicle({}, {}, {} {}, {}, color={}, condition={}, list={})".format(self.vehicle_id, self.vehicle_vin,
+                                                                       self.vehicle_make,
+                                                                       self.vehicle_model, self.vehicle_year,
+                                                                       self.vehicle_color,
+                                                                       self.vehicle_condition, self.vehicle_list_price)

@@ -9,6 +9,13 @@ def appendAndIfNeeded(query, needsAnd):
     return query
 
 
+def is_not_empty(value):
+    try:
+        return value is not None and len(value) > 0
+    except TypeError:
+        return True
+
+
 class Database:
 
     def __init__(self):
@@ -49,7 +56,7 @@ class Database:
     def searchCustomers(self, customer_last_name=None, customer_first_name=None, customer_taxpayer_id=None):
         query = "SELECT * FROM customer"
 
-        if customer_last_name is not None or customer_first_name is not None or customer_taxpayer_id is not None:
+        if is_not_empty(customer_last_name) or is_not_empty(customer_first_name) or is_not_empty(customer_taxpayer_id):
             # add where clauses
             query += " WHERE "
             needsAnd = False
@@ -80,63 +87,63 @@ class Database:
                        vehicle_sale_price=None,
                        vehicle_sold=None):
         query = "SELECT * FROM vehicle"
-        if vehicle_make is not None or vehicle_model is not None or vehicle_year is not None or \
-                vehicle_color is not None or vehicle_miles is not None or vehicle_condition is not None or \
-                vehicle_style is not None or vehicle_interior_color is not None or vehicle_list_price is not None or \
-                vehicle_sale_price is not None or vehicle_sold is not None:
+        if is_not_empty(vehicle_make) or is_not_empty(vehicle_model) or is_not_empty(vehicle_year) or is_not_empty(
+                vehicle_color) or is_not_empty(vehicle_miles) or is_not_empty(vehicle_condition) or is_not_empty(
+            vehicle_style) or is_not_empty(vehicle_interior_color) or is_not_empty(vehicle_list_price) or is_not_empty(
+            vehicle_sale_price) or is_not_empty(vehicle_sold):
             # add where clauses
             query += " WHERE "
             needsAnd = False
-            if vehicle_make is not None:
+            if is_not_empty(vehicle_make):
                 query += " `vehicle_make` = '{}'".format(vehicle_make)
                 needsAnd = True
 
-            if vehicle_model is not None:
+            if is_not_empty(vehicle_model):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_model` = '{}'".format(vehicle_model)
                 needsAnd = True
 
-            if vehicle_year is not None:
+            if is_not_empty(vehicle_year):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_year` = '{}'".format(vehicle_year)
                 needsAnd = True
 
-            if vehicle_color is not None:
+            if is_not_empty(vehicle_color):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_color` = '{}'".format(vehicle_color)
                 needsAnd = True
 
-            if vehicle_miles is not None:
+            if is_not_empty(vehicle_miles):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_miles` <= '{}'".format(vehicle_miles)
                 needsAnd = True
 
-            if vehicle_condition is not None:
+            if is_not_empty(vehicle_condition):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_condition` = '{}'".format(vehicle_condition)
                 needsAnd = True
 
-            if vehicle_style is not None:
+            if is_not_empty(vehicle_style):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_style` = '{}'".format(vehicle_style)
                 needsAnd = True
 
-            if vehicle_interior_color is not None:
+            if is_not_empty(vehicle_interior_color):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_interior_color` = '{}'".format(vehicle_interior_color)
                 needsAnd = True
 
-            if vehicle_list_price is not None:
+            if is_not_empty(vehicle_list_price):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_list_price` <= '{}'".format(vehicle_list_price)
                 needsAnd = True
 
-            if vehicle_sale_price is not None:
+            if is_not_empty(vehicle_sale_price):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_sale_price` = '{}'".format(vehicle_sale_price)
                 needsAnd = True
 
-            if vehicle_sold is not None:
+            if is_not_empty(vehicle_sold):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_sold` = '{}'".format(vehicle_sold)
 
@@ -159,7 +166,6 @@ class Database:
         cursor = self.query(query)
         self.cnx.commit()
         cursor.close()
-
 
     def insertVehicle(self, vehicle):
         query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 

@@ -1,10 +1,10 @@
 class Customer:
     @classmethod
-    def fromNamedTuple(cls, namedTuple):
-        return cls(namedTuple.customer_id, namedTuple.customer_phone, namedTuple.customer_last_name,
-                   namedTuple.customer_first_name, namedTuple.customer_address, namedTuple.customer_city,
-                   namedTuple.customer_state, namedTuple.customer_zip, namedTuple.customer_gender,
-                   namedTuple.customer_dob, namedTuple.customer_taxpayer_id)
+    def fromNamedTuple(cls, customer):
+        return cls(customer.customer_id, customer.customer_phone, customer.customer_last_name,
+                   customer.customer_first_name, customer.customer_address, customer.customer_city,
+                   customer.customer_state, customer.customer_zip, customer.customer_gender,
+                   customer.customer_dob, customer.customer_taxpayer_id)
 
     def __init__(self,
                  customer_id, customer_phone, customer_last_name, customer_first_name, customer_address, customer_city,

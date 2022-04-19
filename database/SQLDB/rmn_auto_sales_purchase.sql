@@ -26,12 +26,11 @@ CREATE TABLE `purchase` (
   `purchase_id` int NOT NULL AUTO_INCREMENT,
   `purchase_date` datetime NOT NULL,
   `seller_id` int NOT NULL,
-  `auction` varchar(3) NOT NULL,
+  `auction` tinyint NOT NULL,
   PRIMARY KEY (`purchase_id`),
   KEY `fk_seller_id_idx` (`seller_id`),
-  CONSTRAINT `fk_purchage_id` FOREIGN KEY (`purchase_id`) REFERENCES `vehicle_purchase` (`purchase_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_seller_id` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`seller_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +39,7 @@ CREATE TABLE `purchase` (
 
 LOCK TABLES `purchase` WRITE;
 /*!40000 ALTER TABLE `purchase` DISABLE KEYS */;
+INSERT INTO `purchase` VALUES (5,'2022-04-19 00:00:00',1,0),(6,'2022-04-19 00:00:00',1,0),(7,'2022-04-19 00:00:00',1,0),(8,'2022-04-19 00:00:00',1,0),(9,'2022-04-19 00:00:00',1,0),(10,'2022-04-19 00:00:00',1,0),(11,'2022-04-19 00:00:00',1,0),(12,'2022-04-19 00:00:00',1,0),(13,'2022-04-19 00:00:00',1,0),(14,'2022-04-19 00:00:00',1,0),(15,'2022-04-19 00:00:00',1,0),(16,'2022-04-19 00:00:00',1,0),(20,'2022-04-19 00:00:00',1,0),(21,'2022-04-19 00:00:00',1,0),(22,'2022-04-19 00:00:00',1,0),(23,'2022-04-19 00:00:00',1,0),(24,'2022-04-19 00:00:00',1,0),(25,'2022-04-19 00:00:00',1,0),(27,'2022-04-19 00:00:00',1,0),(28,'2022-04-19 00:00:00',1,0);
 /*!40000 ALTER TABLE `purchase` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-16 23:30:50
+-- Dump completed on 2022-04-19 14:37:32

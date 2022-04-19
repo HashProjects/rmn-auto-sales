@@ -1,7 +1,7 @@
 class VehiclePurchase:
     @classmethod
     def fromNamedTuple(cls, vehicle_purchase):
-        return cls(vehicle_purchase.purchase_id, vehicle_purchase.vehicle_id, vehicle_purchase.book_price)
+        return cls(vehicle_purchase.purchase_id, vehicle_purchase.vehicle_id, vehicle_purchase.book_price, vehicle_purchase.price_paid)
 
     def __init__(self,
                  purchase_id, vehicle_id, book_price, price_paid):
@@ -9,3 +9,12 @@ class VehiclePurchase:
         self.vehicle_id = vehicle_id
         self.book_price = book_price
         self.price_paid = price_paid
+
+        self.vehicle_problems = []
+
+    def addProblem(self, problem):
+        self.vehicle_problems.append(problem)
+
+    def __str__(self):
+        return "VehiclePurchase({}, {}, {})".format(self.vehicle_id, self.book_price, self.price_paid)
+

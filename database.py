@@ -1,6 +1,11 @@
 import mysql.connector
 import random
+
+from seller import Seller
 from vehicle import Vehicle
+from purchase import Purchase
+from vehicleproblem import VehicleProblem
+from vehiclepurchase import VehiclePurchase
 
 
 def appendAndIfNeeded(query, needsAnd):
@@ -51,7 +56,23 @@ class Database:
         if cursor.rowcount > 0:
             result = cursor.fetchone()
         self.closeCursor(cursor)
-        return result
+        return Vehicle.fromNamedTuple(result)
+
+    def getSellerByTaxId(self, tax_id):
+        cursor = self.query("SELECT * FROM seller WHERE `seller_tax_id` = '{}'".format(tax_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        return Seller.fromNamedTuple(result)
+
+    def getPurchaseById(self, purchase_id):
+        cursor = self.query("SELECT * FROM purchase WHERE `purchase_id` = '{}'".format(purchase_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        return Purchase.fromNamedTuple(result)
 
     def searchCustomers(self, customer_last_name=None, customer_first_name=None, customer_taxpayer_id=None):
         query = "SELECT * FROM customer"
@@ -167,6 +188,18 @@ class Database:
         self.cnx.commit()
         cursor.close()
 
+    def insertSeller(self, seller):
+        query = """INSERT INTO `seller` (seller_id, seller_name, seller_address, seller_city, seller_state, seller_zip, seller_phone
+                 , seller_tax_id) VALUES ('{}', '{}', '{}', '{}', '{}', 
+        '{}', '{}', '{}')""".format(
+            seller.seller_id, seller.seller_name, seller.seller_address, seller.seller_city, seller.seller_state
+            , seller.seller_zip, seller.seller_phone, seller.seller_tax_id)
+        cursor = self.query(query)
+        result = cursor.glastrowid
+        self.cnx.commit()
+        cursor.close()
+        return result
+
     def insertVehicle(self, vehicle):
         query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 
         `vehicle_color`, `vehicle_miles`, `vehicle_condition`, `vehicle_style`, `vehicle_interior_color`, 
@@ -179,3 +212,78 @@ class Database:
         cursor = self.query(query)
         self.cnx.commit()
         cursor.close()
+
+    def purchase(self, purchase, vehicles, vehiclepurchases):
+
+        query = "INSERT into `purchase` (`purchase_date`, `seller_id`, `auction`) VALUES ('{}','{}', '{}')".format(purchase.purchase_date, purchase.seller_id, int(purchase.auction))
+        cursor = self.query(query)
+
+        purchase_id = cursor.lastrowid
+
+        for i in range(0, len(vehicles)):
+            vehicle = vehicles[i]
+            query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 
+                    `vehicle_color`, `vehicle_miles`, `vehicle_condition`, `vehicle_style`, `vehicle_interior_color`, 
+                    `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`) VALUES ('{}', '{}', '{}', '{}', '{}', 
+                    '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
+                vehicle.vehicle_vin, vehicle.vehicle_make, vehicle.vehicle_model, vehicle.vehicle_year,
+                vehicle.vehicle_color,
+                vehicle.vehicle_miles, vehicle.vehicle_condition, vehicle.vehicle_style, vehicle.vehicle_interior_color,
+                vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold)
+            cursor = self.query(query)
+            vehicle_id = cursor.lastrowid
+
+            query = """INSERT INTO `vehicle_purchase` (`purchase_id`, `vehicle_id`, `book_price`, `price_paid`) 
+            VALUES ('{}', '{}', '{}', '{}')""".format(
+                purchase_id, vehicle_id, vehiclepurchases[i].book_price, vehiclepurchases[i].price_paid)
+
+            self.query(query)
+
+            problems = vehiclepurchases[i].vehicle_problems
+            problem_id = 1
+            for vehicleproblem in problems:
+                query = """INSERT INTO `vehicle_problems` (`purchase_id`, `vehicle_id`, `problem_id`, `problem_description`, `estimated_repair_cost`) 
+                VALUES ('{}', '{}', '{}', '{}', '{}')""".format(purchase_id, vehicle_id, problem_id,
+                   vehicleproblem.problem_description, vehicleproblem.estimated_repair_cost)
+                problem_id += 1
+                self.query(query)
+
+        # commit these changes
+        self.cnx.commit()
+        return purchase_id
+
+    def getVehiclePurchases(self, purchase_id):
+        query = "SELECT * from vehicle_purchase WHERE purchase_id = '{}'".format(purchase_id)
+        cursor = self.query(query)
+        result = []
+        if cursor.rowcount:
+            for vehiclePurchase in cursor:
+                result.append(VehiclePurchase.fromNamedTuple(vehiclePurchase))
+        cursor.close()
+        return result
+
+    def getVehicleProblems(self, purchase_id, vehicle_id):
+        query = "SELECT * from vehicle_problems WHERE purchase_id = '{}' AND vehicle_id ='{}'".format(purchase_id, vehicle_id)
+        cursor = self.query(query)
+        result = []
+        if cursor.rowcount:
+            for problem in cursor:
+                result.append(VehicleProblem.fromNamedTuple(problem))
+        cursor.close()
+        return result
+
+    def getPurchaseReport(self, purchase_id):
+        purchase = self.getPurchaseById(purchase_id)
+
+        vehiclepurchases = self.getVehiclePurchases(purchase_id)
+
+        print(purchase)
+
+        for vp in vehiclepurchases:
+            print(vp)
+            vehicle = self.getVehicleById(vp.vehicle_id)
+            print("  ", vehicle)
+
+            problems = self.getVehicleProblems(purchase.purchase_id, vp.vehicle_id)
+            for problem in problems:
+                print("    ", problem)

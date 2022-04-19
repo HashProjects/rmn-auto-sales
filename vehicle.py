@@ -33,3 +33,12 @@ class Vehicle:
                                                                        self.vehicle_model, self.vehicle_year,
                                                                        self.vehicle_color,
                                                                        self.vehicle_condition, self.vehicle_list_price)
+
+
+def generateRandomVehicle():
+    return Vehicle(0, "{}N{}".format(random.randint(0, 178739393), random.randint(0, 30)),
+            random.choice(["Infinity", "Toyota", "Ford", "GMC", "Honda", "Chevy"]),
+            "Car", random.randint(2010, 2022), random.choice(["Red", "Blue", "Silver", "White", "Black"]),
+            random.randint(10000, 10000),
+            random.choice(["Good", "Fair", "Excellent"]), random.choice(["Sedan", "Van", "Coupe", "Truck"]),
+            random.randint(40, 100) * 100, random.randint(50, 110) * 100, 0)

@@ -1,17 +1,14 @@
-import random
 import sys
 import os
 
-import vehicleproblem
+from database import vehicleproblem, vehicle
 
-sys.path.insert(1, os.path.abspath(".."))
-import vehicle
+sys.path.insert(1, os.path.abspath("../.."))
 
-from purchase import Purchase
-from vehicle import Vehicle
-from database import Database
-from vehiclepurchase import VehiclePurchase
-from seller import Seller
+from database.purchase import Purchase
+from database.database import Database
+from database.vehiclepurchase import VehiclePurchase
+from database.seller import Seller
 
 newCar = vehicle.generateRandomVehicle()
 

@@ -9,12 +9,10 @@
 
 import sys
 import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter.constants import *
 
 import vehicle_search
 import tksheet
-import database
+from database import database
 
 DB = database.Database()
 

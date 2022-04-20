@@ -1,11 +1,11 @@
 import mysql.connector
 import random
 
-from seller import Seller
-from vehicle import Vehicle
-from purchase import Purchase
-from vehicleproblem import VehicleProblem
-from vehiclepurchase import VehiclePurchase
+from database.seller import Seller
+from database.vehicle import Vehicle
+from database.purchase import Purchase
+from database.vehicleproblem import VehicleProblem
+from database.vehiclepurchase import VehiclePurchase
 
 
 def appendAndIfNeeded(query, needsAnd):

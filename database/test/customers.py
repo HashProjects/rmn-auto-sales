@@ -2,9 +2,9 @@ import random
 import sys
 import os
 
-sys.path.insert(1, os.path.abspath(".."))
-from customer import Customer
-from database import Database
+sys.path.insert(1, os.path.abspath("../.."))
+from database.customer import Customer
+from database.database import Database
 
 # example program
 

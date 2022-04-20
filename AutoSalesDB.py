@@ -1,5 +1,5 @@
 import random
-from vehicle import Vehicle
+from database.vehicle import Vehicle
 from database import Database
 
 # example program

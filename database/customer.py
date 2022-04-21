@@ -1,3 +1,6 @@
+import random
+
+
 class Customer:
     @classmethod
     def fromNamedTuple(cls, customer):
@@ -23,3 +26,22 @@ class Customer:
 
     def __str__(self):
         return "Customer({} {}, dob={})".format(self.customer_first_name, self.customer_last_name, self.customer_dob)
+
+
+def generateRandomCustomer():
+    return Customer(0,
+                    "{}-{}-{}".format(random.randint(100, 1000), random.randint(100, 1000),
+                                      random.randint(1000, 10000)),
+                    random.choice(["Smith", "Nyugen", "Biden", "Trump", "Harris", "Newsome", "Johnson"]),
+                    random.choice(["Donald", "Joe", "Kamala", "Ted", "Loan", "Gavin", "Eric", "Mohit", "Sammy"]),
+                    "{} {} {}".format(random.randint(1000, 100000), random.choice(
+                        ["Mockingbird", "Wayne Street", "Kent", "Martin Luther King Jr"]),
+                                      random.choice(["Lane", "Blvd", "Street", "Road"])),
+                    random.choice(["Fountain Valley", "Fullerton", "Placentia", "Orange", "Garden Grove", "Anaheim",
+                                   "Newport Beach", "Irvine"]),
+                    random.choice(["Fountain Valley", "California", "Texas", "Florida", "Nevada"]),
+                    random.randint(10000, 10000),
+                    random.choice(["Male", "Female"]),
+                    "{}-{}-{}".format(random.randint(1, 13), random.randint(1, 31), random.randint(1970, 2000)),
+                    "{}-{}-{}".format(random.randint(100, 1000), random.randint(10, 100),
+                                      random.randint(1000, 10000)))

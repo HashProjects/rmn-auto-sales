@@ -1,3 +1,6 @@
+import random
+
+
 class SalesPerson:
     @classmethod
     def fromNamedTuple(cls, salesperson):
@@ -11,3 +14,12 @@ class SalesPerson:
 
     def __str__(self):
         return "SalesPerson({}; {})".format(self.salesperson_name, self.salesperson_phone)
+
+
+def generateRandomSalesPerson():
+    return SalesPerson(0,
+                       random.choice(["Don", "Joseph", "Gerald", "Harry", "Chan", "Fred", "Eric", "Mohit", "Nick"]) + " " +
+                       random.choice(["Smithers", "Nyugen", "Binden", "Trumpet", "Harrison", "Oldsome", "Johnson"]),
+                       "{}-{}-{}".format(random.randint(100, 1000), random.randint(100, 1000),
+                                         random.randint(1000, 10000))
+                       )

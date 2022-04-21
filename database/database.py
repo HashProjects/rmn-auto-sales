@@ -1,11 +1,16 @@
 import mysql.connector
 import random
 
+from database.customer import Customer
+from database.employment import CustomerEmployment
+from database.sale import VehicleSale
+from database.salesperson import SalesPerson
 from database.seller import Seller
 from database.vehicle import Vehicle
 from database.purchase import Purchase
 from database.vehicleproblem import VehicleProblem
 from database.vehiclepurchase import VehiclePurchase
+from database.warrantyitem import WarrantyItem
 
 
 def appendAndIfNeeded(query, needsAnd):
@@ -48,7 +53,7 @@ class Database:
         if cursor.rowcount > 0:
             result = cursor.fetchone()
         self.closeCursor(cursor)
-        return result
+        return Customer.fromNamedTuple(result)
 
     def getVehicleById(self, vehicle_id):
         cursor = self.query("SELECT * FROM vehicle WHERE `vehicle_id` = {}".format(vehicle_id))
@@ -99,6 +104,37 @@ class Database:
         result = []
         for row in cursor:
             result.append(row)
+        self.closeCursor(cursor)
+        return result
+
+    def getSalesPersonById(self, salesperson_id):
+        cursor = self.query("SELECT * FROM sales_people WHERE `salesperson_id` = {}".format(salesperson_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        return SalesPerson.fromNamedTuple(result)
+
+    def searchSalesPeople(self, salesperson_name=None, salesperson_phone=None):
+        query = "SELECT * FROM sales_people"
+
+        if is_not_empty(salesperson_name) or is_not_empty(salesperson_phone):
+            # add where clauses
+            query += " WHERE "
+            needsAnd = False
+            if salesperson_name is not None:
+                query += " `salesperson_name` = '{}'".format(salesperson_name)
+                needsAnd = True
+
+            if salesperson_phone is not None:
+                query = appendAndIfNeeded(query, needsAnd)
+                query += " `salesperson_phone` = '{}'".format(salesperson_phone)
+                needsAnd = True
+
+        cursor = self.query(query)
+        result = []
+        for row in cursor:
+            result.append(SalesPerson.fromNamedTuple(row))
         self.closeCursor(cursor)
         return result
 
@@ -177,9 +213,9 @@ class Database:
         return result
 
     def insertCustomer(self, customer):
-        query = """INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, customer_city,
-                 customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{}', '{}', '{}', '{}', '{}', 
-        '{}', '{}', '{}', '{}', '{}')""".format(
+        query = """INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, 
+        customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{
+        }', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
             customer.customer_phone, customer.customer_last_name,
             customer.customer_first_name, customer.customer_address, customer.customer_city,
             customer.customer_state, customer.customer_zip, customer.customer_gender,
@@ -189,9 +225,8 @@ class Database:
         cursor.close()
 
     def insertSeller(self, seller):
-        query = """INSERT INTO `seller` (seller_id, seller_name, seller_address, seller_city, seller_state, seller_zip, seller_phone
-                 , seller_tax_id) VALUES ('{}', '{}', '{}', '{}', '{}', 
-        '{}', '{}', '{}')""".format(
+        query = """INSERT INTO `seller` (seller_id, seller_name, seller_address, seller_city, seller_state, 
+        seller_zip, seller_phone , seller_tax_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
             seller.seller_id, seller.seller_name, seller.seller_address, seller.seller_city, seller.seller_state
             , seller.seller_zip, seller.seller_phone, seller.seller_tax_id)
         cursor = self.query(query)
@@ -215,7 +250,8 @@ class Database:
 
     def purchase(self, purchase, vehicles, vehiclepurchases):
 
-        query = "INSERT into `purchase` (`purchase_date`, `seller_id`, `auction`) VALUES ('{}','{}', '{}')".format(purchase.purchase_date, purchase.seller_id, int(purchase.auction))
+        query = "INSERT into `purchase` (`purchase_date`, `seller_id`, `auction`) VALUES ('{}','{}', '{}')".format(
+            purchase.purchase_date, purchase.seller_id, int(purchase.auction))
         cursor = self.query(query)
 
         purchase_id = cursor.lastrowid
@@ -244,7 +280,8 @@ class Database:
             for vehicleproblem in problems:
                 query = """INSERT INTO `vehicle_problems` (`purchase_id`, `vehicle_id`, `problem_id`, `problem_description`, `estimated_repair_cost`) 
                 VALUES ('{}', '{}', '{}', '{}', '{}')""".format(purchase_id, vehicle_id, problem_id,
-                   vehicleproblem.problem_description, vehicleproblem.estimated_repair_cost)
+                                                                vehicleproblem.problem_description,
+                                                                vehicleproblem.estimated_repair_cost)
                 problem_id += 1
                 self.query(query)
 
@@ -263,12 +300,22 @@ class Database:
         return result
 
     def getVehicleProblems(self, purchase_id, vehicle_id):
-        query = "SELECT * from vehicle_problems WHERE purchase_id = '{}' AND vehicle_id ='{}'".format(purchase_id, vehicle_id)
+        query = "SELECT * from vehicle_problems WHERE purchase_id = '{}' AND vehicle_id ='{}'".format(purchase_id,
+                                                                                                      vehicle_id)
         cursor = self.query(query)
         result = []
         if cursor.rowcount:
             for problem in cursor:
                 result.append(VehicleProblem.fromNamedTuple(problem))
+        cursor.close()
+        return result
+
+    def insertSalesPerson(self, salesperson):
+        query = """INSERT INTO `sales_people` (`salesperson_name`, `salesperson_phone`) VALUES ('{}', '{}')""".format(
+            salesperson.salesperson_name, salesperson.salesperson_phone)
+        cursor = self.query(query)
+        result = cursor.lastrowid
+        self.cnx.commit()
         cursor.close()
         return result
 
@@ -287,3 +334,107 @@ class Database:
             problems = self.getVehicleProblems(purchase.purchase_id, vp.vehicle_id)
             for problem in problems:
                 print("    ", problem)
+
+    def getWarrantyItemByName(self, warrantyItemName):
+        cursor = self.query("SELECT * FROM warranty_item WHERE `item_description` = '{}'".format(warrantyItemName))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        if result is not None:
+            return WarrantyItem.fromNamedTuple(result)
+        else:
+            return None
+
+    def insertWarrantyItem(self, warranty_item):
+        query = """INSERT INTO `warranty_item` (`item_description`) VALUES ('{}')""".format(
+            warranty_item.item_description)
+        cursor = self.query(query)
+        self.cnx.commit()
+        cursor.close()
+
+    def sellVehicle(self, vehicleSale):
+
+        customer = vehicleSale.customer
+        # we need to skip this insert if the customer exists
+        query = """
+        INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, 
+        customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{}', 
+        '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(
+            customer.customer_phone, customer.customer_last_name,
+            customer.customer_first_name, customer.customer_address, customer.customer_city,
+            customer.customer_state, customer.customer_zip, customer.customer_gender,
+            customer.customer_dob, customer.customer_taxpayer_id)
+
+        cursor = self.query(query)
+        customer_id = cursor.lastrowid
+
+        query = """INSERT into `sale` (sale_id, sale_date, total_due, down_payment, financed_amount, 
+        employee_id, employee_commission, vehicle_id, customer_id) VALUES ('{}','{}', 
+        '{}','{}', '{}','{}', '{}','{}', '{}')""".format(vehicleSale.sale_id, vehicleSale.sale_date,
+                                                         vehicleSale.total_due,
+                                                         vehicleSale.down_payment, vehicleSale.financed_amount,
+                                                         vehicleSale.employee_id,
+                                                         vehicleSale.employee_commission, vehicleSale.vehicle_id,
+                                                         customer_id)
+        cursor = self.query(query)
+
+        sale_id = cursor.lastrowid
+
+        query = "UPDATE `vehicle` SET `vehicle_sold` = '1' WHERE `vehicle_id` = '{}'".format(vehicleSale.vehicle_id)
+        self.query(query)
+
+        employmentIndex = 0
+        for i in range(0, len(vehicleSale.customer_employment)):
+            customer_employment = vehicleSale.customer_employment[i]
+            employmentIndex += 1
+            query = """INSERT INTO `employment` (customer_id, employment_id, employer, title, supervisor, supervisor_phone, employer_address,
+                 start_date, end_date) VALUES ('{}', '{}', '{}', '{}', '{}', 
+                    '{}', '{}', '{}', '{}')""".format(
+                customer_id,
+                employmentIndex,
+                customer_employment.employer,
+                customer_employment.title,
+                customer_employment.supervisor,
+                customer_employment.supervisor_phone,
+                customer_employment.employer_address,
+                customer_employment.start_date,
+                customer_employment.end_date)
+            cursor = self.query(query)
+            employment_id = cursor.lastrowid
+
+        # commit these changes
+        self.cnx.commit()
+        return sale_id
+
+    def getSaleReport(self, sale_id):
+        sale = self.getVehicleSaleById(sale_id)
+
+        vehicle = self.getVehicleById(sale.vehicle_id)
+
+        customer = self.getCustomerById(sale.customer_id)
+
+        history = self.getCustomerEmploymentHistory(customer.customer_id)
+
+        print(sale)
+        print("  ", customer)
+        for item in history:
+            print("    ", item)
+        print("  ", vehicle)
+
+    def getVehicleSaleById(self, sale_id):
+        cursor = self.query("SELECT * FROM sale WHERE `sale_id` = {}".format(sale_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        return VehicleSale.fromNamedTuple(result)
+
+    def getCustomerEmploymentHistory(self, customerId):
+        cursor = self.query("SELECT * FROM employment WHERE `customer_id` = {}".format(customerId))
+        result = []
+        for item in cursor:
+            result.append(CustomerEmployment.fromNamedTuple(item))
+        self.closeCursor(cursor)
+        return result

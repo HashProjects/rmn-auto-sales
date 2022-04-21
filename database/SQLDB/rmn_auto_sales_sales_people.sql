@@ -25,10 +25,9 @@ DROP TABLE IF EXISTS `sales_people`;
 CREATE TABLE `sales_people` (
   `salesperson_id` int NOT NULL AUTO_INCREMENT,
   `salesperson_name` varchar(45) NOT NULL,
-  `salesperson_phone` int NOT NULL,
-  PRIMARY KEY (`salesperson_id`),
-  CONSTRAINT `fk_salesperson_id` FOREIGN KEY (`salesperson_id`) REFERENCES `warranty_sale` (`salesperson_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `salesperson_phone` varchar(15) NOT NULL,
+  PRIMARY KEY (`salesperson_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +36,7 @@ CREATE TABLE `sales_people` (
 
 LOCK TABLES `sales_people` WRITE;
 /*!40000 ALTER TABLE `sales_people` DISABLE KEYS */;
+INSERT INTO `sales_people` VALUES (2,'Nick Binden','240-587-4838'),(3,'Eric Nyugen','530-896-1146'),(4,'Joseph Oldsome','151-352-6708'),(5,'Gerald Oldsome','827-977-4112'),(6,'Harry Smithers','527-410-2246'),(7,'Don Nyugen','435-635-4870');
 /*!40000 ALTER TABLE `sales_people` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-16 23:30:50
+-- Dump completed on 2022-04-21 11:17:33

@@ -25,9 +25,8 @@ DROP TABLE IF EXISTS `warranty_item`;
 CREATE TABLE `warranty_item` (
   `item_id` int NOT NULL AUTO_INCREMENT,
   `item_description` varchar(45) NOT NULL,
-  PRIMARY KEY (`item_id`),
-  CONSTRAINT `fk_item_id` FOREIGN KEY (`item_id`) REFERENCES `warranty_item_list` (`item_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,6 +35,7 @@ CREATE TABLE `warranty_item` (
 
 LOCK TABLES `warranty_item` WRITE;
 /*!40000 ALTER TABLE `warranty_item` DISABLE KEYS */;
+INSERT INTO `warranty_item` VALUES (2,'Tire'),(3,'Drivetrain'),(4,'Windows'),(5,'Battery'),(6,'Paint'),(7,'Headlights'),(8,'Entire Vehicle');
 /*!40000 ALTER TABLE `warranty_item` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-16 23:30:50
+-- Dump completed on 2022-04-21 11:17:33

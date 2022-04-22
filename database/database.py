@@ -10,7 +10,10 @@ from database.vehicle import Vehicle
 from database.purchase import Purchase
 from database.vehicleproblem import VehicleProblem
 from database.vehiclepurchase import VehiclePurchase
+from database.warranty import Warranty
 from database.warrantyitem import WarrantyItem
+from database.warrantyitemlist import WarrantyItemListEntry
+from database.warrantysale import WarrantySale
 
 
 def appendAndIfNeeded(query, needsAnd):
@@ -137,6 +140,23 @@ class Database:
             result.append(SalesPerson.fromNamedTuple(row))
         self.closeCursor(cursor)
         return result
+
+    def searchWarrantyItems(self, item_description=None):
+        query = "SELECT * FROM warranty_item"
+
+        if is_not_empty(item_description):
+            # add where clauses
+            query += " WHERE "
+            if item_description is not None:
+                query += " `item_description` = '{}'".format(item_description)
+
+        cursor = self.query(query)
+        result = []
+        for row in cursor:
+            result.append(WarrantyItem.fromNamedTuple(row))
+        self.closeCursor(cursor)
+        return result
+
 
     def searchVehicles(self, vehicle_make=None, vehicle_model=None, vehicle_year=None, vehicle_color=None,
                        vehicle_miles=None,
@@ -389,9 +409,9 @@ class Database:
         for i in range(0, len(vehicleSale.customer_employment)):
             customer_employment = vehicleSale.customer_employment[i]
             employmentIndex += 1
-            query = """INSERT INTO `employment` (customer_id, employment_id, employer, title, supervisor, supervisor_phone, employer_address,
-                 start_date, end_date) VALUES ('{}', '{}', '{}', '{}', '{}', 
-                    '{}', '{}', '{}', '{}')""".format(
+            query = """INSERT INTO `employment` (customer_id, employment_id, employer, title, supervisor, 
+            supervisor_phone, employer_address, start_date, end_date) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', 
+            '{}', '{}', '{}')""".format(
                 customer_id,
                 employmentIndex,
                 customer_employment.employer,
@@ -436,5 +456,95 @@ class Database:
         result = []
         for item in cursor:
             result.append(CustomerEmployment.fromNamedTuple(item))
+        self.closeCursor(cursor)
+        return result
+
+    def purchaseWarranty(self, warrantySale):
+
+        customer = warrantySale.customer
+        # we need to skip this insert if the customer exists
+        query = """
+        INSERT INTO `warranty_sale` (warranty_sale_id, vehicle_id, customer_id, co_signer_name, warranty_sale_date, total_cost,
+                 monthly_cost, salesperson_id) VALUES ('{}', 
+        '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(
+            warrantySale.warranty_sale_id, warrantySale.vehicle_id,
+            warrantySale.customer_id, warrantySale.co_signer_name,
+            warrantySale.warranty_sale_date, warrantySale.total_cost,
+            warrantySale.monthly_cost, warrantySale.salesperson_id)
+
+        cursor = self.query(query)
+        warrantySaleId = cursor.lastrowid
+
+        employmentIndex = 0
+        for i in range(0, len(warrantySale.warranties)):
+            warranty = warrantySale.warranties[i]
+            employmentIndex += 1
+            query = """INSERT INTO `warranty` (warranty_sale_id, warranty_start_date, warranty_length, warranty_cost, warranty_deductable) 
+            VALUES ('{}', '{}', '{}', '{}', '{}')""".format(warrantySaleId,
+                warranty.warranty_start_date, warranty.warranty_length,
+                warranty.warranty_cost, warranty.warranty_deductable)
+            cursor = self.query(query)
+            warranty_id = cursor.lastrowid
+
+            for j in range(0, len(warranty.warranty_item_list)):
+                warranty_item_list = warranty.warranty_item_list[i]
+                employmentIndex += 1
+                query = """INSERT INTO `warranty_item_list` (warranty_sale_id, warranty_id, item_id) 
+                VALUES ('{}', '{}', '{}')""".format(
+                    warrantySaleId, warranty_id, warranty_item_list.item_id)
+                cursor = self.query(query)
+                warranty_item_list_id = cursor.lastrowid
+
+
+
+        # commit these changes
+        self.cnx.commit()
+        return warrantySaleId
+
+    def getWarrantyReport(self, warrantySaleId):
+        warrantySale = self.getWarrantySaleById(warrantySaleId)
+
+        vehicle = self.getVehicleById(warrantySale.vehicle_id)
+
+        customer = self.getCustomerById(warrantySale.customer_id)
+
+        salesPerson = self.getSalesPersonById(warrantySale.salesperson_id)
+
+        print(warrantySale)
+        print("  ", vehicle)
+        print("  ", customer)
+        print("  ", salesPerson)
+
+        warranties = self.getWarrantyById(warrantySaleId)
+
+        for warranty in warranties:
+            print("    ", warranty)
+
+            warrantyItems = self.getWarrantyItemList(warrantySaleId, warranty.warranty_id)
+            for item in warrantyItems:
+                print("      ", item)
+
+    def getWarrantySaleById(self, warrantySaleId):
+        cursor = self.query("SELECT * FROM warranty_sale WHERE `warranty_sale_id` = {}".format(warrantySaleId))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        return WarrantySale.fromNamedTuple(result)
+
+    def getWarrantyById(self, warrantySaleId):
+        cursor = self.query("SELECT * FROM warranty WHERE `warranty_sale_id` = {}".format(warrantySaleId))
+        result = []
+        for warranty in cursor:
+            result.append(Warranty.fromNamedTuple(warranty))
+        self.closeCursor(cursor)
+        return result
+
+    def getWarrantyItemList(self, warrantySaleId, warranty_id):
+        cursor = self.query("SELECT * FROM warranty_item_list WHERE `warranty_id` = {}".format(warranty_id))
+        result = []
+        for warranty in cursor:
+            result.append(WarrantyItemListEntry.fromNamedTuple(warranty))
         self.closeCursor(cursor)
         return result

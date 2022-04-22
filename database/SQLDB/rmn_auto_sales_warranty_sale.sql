@@ -33,7 +33,7 @@ CREATE TABLE `warranty_sale` (
   `salesperson_id` int NOT NULL,
   PRIMARY KEY (`warranty_sale_id`,`vehicle_id`,`customer_id`,`salesperson_id`),
   KEY `fk_salesperson_id_idx` (`salesperson_id`) /*!80000 INVISIBLE */
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +42,7 @@ CREATE TABLE `warranty_sale` (
 
 LOCK TABLES `warranty_sale` WRITE;
 /*!40000 ALTER TABLE `warranty_sale` DISABLE KEYS */;
+INSERT INTO `warranty_sale` VALUES (1,21,3,'None','2022-04-22 00:00:00',1000,100,2),(2,67,19,'None','2022-04-22 00:00:00',1000,100,3),(3,32,16,'None','2022-04-22 00:00:00',1000,100,3),(4,17,22,'None','2022-04-22 00:00:00',1000,100,7),(7,1,28,'None','2022-04-22 00:00:00',1000,100,6),(8,33,6,'None','2022-04-22 00:00:00',1000,100,2),(9,71,19,'None','2022-04-22 00:00:00',1000,100,2),(10,16,20,'None','2022-04-22 00:00:00',1000,100,4),(11,49,24,'None','2022-04-22 00:00:00',1000,100,6),(12,71,6,'None','2022-04-22 00:00:00',1000,100,5),(13,62,3,'None','2022-04-22 00:00:00',1000,100,5),(14,38,18,'None','2022-04-22 00:00:00',1000,100,7),(15,57,21,'None','2022-04-22 00:00:00',1000,100,3);
 /*!40000 ALTER TABLE `warranty_sale` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-21 11:17:33
+-- Dump completed on 2022-04-22 11:40:09

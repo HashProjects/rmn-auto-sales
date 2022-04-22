@@ -28,8 +28,9 @@ CREATE TABLE `warranty` (
   `warranty_length` int NOT NULL,
   `warranty_cost` double NOT NULL,
   `warranty_deductable` varchar(45) NOT NULL,
+  `warranty_sale_id` int NOT NULL,
   PRIMARY KEY (`warranty_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +39,7 @@ CREATE TABLE `warranty` (
 
 LOCK TABLES `warranty` WRITE;
 /*!40000 ALTER TABLE `warranty` DISABLE KEYS */;
+INSERT INTO `warranty` VALUES (2,'2022-04-22 00:00:00',24,4000,'500',7),(3,'2022-04-22 00:00:00',24,4000,'500',8),(4,'2022-04-22 00:00:00',24,4000,'500',9),(5,'2022-04-22 00:00:00',24,4000,'500',10),(6,'2022-04-22 00:00:00',24,4000,'500',11),(7,'2022-04-22 00:00:00',24,4000,'500',12),(8,'2022-04-22 00:00:00',24,4000,'500',13),(9,'2022-04-22 00:00:00',24,4000,'500',14),(10,'2022-04-22 00:00:00',24,4000,'500',15);
 /*!40000 ALTER TABLE `warranty` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-21 11:17:33
+-- Dump completed on 2022-04-22 11:40:09

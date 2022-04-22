@@ -30,7 +30,7 @@ CREATE TABLE `warranty_item_list` (
   KEY `fk_warranty_id_idx` (`warranty_id`) /*!80000 INVISIBLE */,
   KEY `fk_item_id_idx` (`item_id`) /*!80000 INVISIBLE */,
   CONSTRAINT `fk_warranty_id` FOREIGN KEY (`warranty_id`) REFERENCES `warranty` (`warranty_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +39,7 @@ CREATE TABLE `warranty_item_list` (
 
 LOCK TABLES `warranty_item_list` WRITE;
 /*!40000 ALTER TABLE `warranty_item_list` DISABLE KEYS */;
+INSERT INTO `warranty_item_list` VALUES (7,2,3),(8,3,3),(9,4,8),(10,5,8),(11,6,7),(12,7,7),(13,8,5),(14,9,7),(15,10,8);
 /*!40000 ALTER TABLE `warranty_item_list` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-21 11:17:33
+-- Dump completed on 2022-04-22 11:40:09

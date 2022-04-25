@@ -26,19 +26,25 @@ newCar = Vehicle(0, "{}N{}".format(random.randint(0, 178739393), random.randint(
                  random.choice(["Infinity", "Toyota", "Ford", "GCM"]),
                  "Car", random.randint(2010, 2022), "Red", random.randint(10000, 10000),
                  random.choice(["Good", "Fair", "Excellent"]), random.choice(["Sedan", "Van", "Coupe", "Truck"]),
-                 random.randint(40, 100) * 100, random.randint(50, 110) * 100, 0)
+                 random.randint(40, 100) * 100, random.randint(50, 110) * 100, 0, 1)
 
-# db.insertVehicle(newCar)
+db.insertVehicle(newCar)
 
 print("----------------------------------------")
 cursor = cursor = db.query("SELECT  * FROM vehicle")
 for a in cursor:
     print(a)
+    if not a.vehicle_repaired:
+        print("Remaining Problems")
+        problems = db.getRemainingVehicleProblems(a.vehicle_id)
+        for p in problems:
+            print(p)
 
 print("show Toyotas----------------------------")
 toyotas = db.searchVehicles(vehicle_make="Toyota")
 for c in toyotas:
     print(Vehicle.fromNamedTuple(c))
+
 
 print("show 2018----------------------------")
 toyotas = db.searchVehicles(vehicle_year="2018")
@@ -54,6 +60,9 @@ print("show Good Condition and less than 10000-----------------")
 toyotas = db.searchVehicles(vehicle_condition="Good", vehicle_list_price=10000)
 for c in toyotas:
     print(Vehicle.fromNamedTuple(c))
+
+
+
 
 db.closeCursor(cursor)
 

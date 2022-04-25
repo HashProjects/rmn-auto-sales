@@ -1,8 +1,10 @@
 import mysql.connector
 import random
-
+import datetime
 from database.customer import Customer
 from database.employment import CustomerEmployment
+from database.payment import Payment
+from database.paymenthistory import PaymentHistory
 from database.sale import VehicleSale
 from database.salesperson import SalesPerson
 from database.seller import Seller
@@ -56,7 +58,10 @@ class Database:
         if cursor.rowcount > 0:
             result = cursor.fetchone()
         self.closeCursor(cursor)
-        return Customer.fromNamedTuple(result)
+        try:
+            return Customer.fromNamedTuple(result)
+        except:
+            return None
 
     def getVehicleById(self, vehicle_id):
         cursor = self.query("SELECT * FROM vehicle WHERE `vehicle_id` = {}".format(vehicle_id))
@@ -157,17 +162,17 @@ class Database:
         self.closeCursor(cursor)
         return result
 
-
     def searchVehicles(self, vehicle_make=None, vehicle_model=None, vehicle_year=None, vehicle_color=None,
                        vehicle_miles=None,
                        vehicle_condition=None, vehicle_style=None, vehicle_interior_color=None, vehicle_list_price=None,
                        vehicle_sale_price=None,
-                       vehicle_sold=None):
+                       vehicle_sold=None,
+                       vehicle_repaired=None):
         query = "SELECT * FROM vehicle"
         if is_not_empty(vehicle_make) or is_not_empty(vehicle_model) or is_not_empty(vehicle_year) or is_not_empty(
                 vehicle_color) or is_not_empty(vehicle_miles) or is_not_empty(vehicle_condition) or is_not_empty(
             vehicle_style) or is_not_empty(vehicle_interior_color) or is_not_empty(vehicle_list_price) or is_not_empty(
-            vehicle_sale_price) or is_not_empty(vehicle_sold):
+            vehicle_sale_price) or is_not_empty(vehicle_sold) or is_not_empty(vehicle_repaired):
             # add where clauses
             query += " WHERE "
             needsAnd = False
@@ -223,6 +228,11 @@ class Database:
             if is_not_empty(vehicle_sold):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `vehicle_sold` = '{}'".format(vehicle_sold)
+                needsAnd = True
+
+            if is_not_empty(vehicle_repaired):
+                query = appendAndIfNeeded(query, needsAnd)
+                query += " `vehicle_repaired` = '{}'".format(vehicle_sold)
 
         print(query)
         cursor = self.query(query)
@@ -258,12 +268,12 @@ class Database:
     def insertVehicle(self, vehicle):
         query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 
         `vehicle_color`, `vehicle_miles`, `vehicle_condition`, `vehicle_style`, `vehicle_interior_color`, 
-        `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`) VALUES ('{}', '{}', '{}', '{}', '{}', 
-        '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
+        `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`, `vehicle_repaired`) VALUES ('{}', '{}', '{}', '{}', '{}', 
+        '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
             vehicle.vehicle_vin, vehicle.vehicle_make, vehicle.vehicle_model, vehicle.vehicle_year,
             vehicle.vehicle_color,
             vehicle.vehicle_miles, vehicle.vehicle_condition, vehicle.vehicle_style, vehicle.vehicle_interior_color,
-            vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold)
+            vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold, 1)
         cursor = self.query(query)
         self.cnx.commit()
         cursor.close()
@@ -278,14 +288,15 @@ class Database:
 
         for i in range(0, len(vehicles)):
             vehicle = vehicles[i]
+            isRepaired = len(vehiclepurchases[i].vehicle_problems) == 0
             query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 
                     `vehicle_color`, `vehicle_miles`, `vehicle_condition`, `vehicle_style`, `vehicle_interior_color`, 
-                    `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`) VALUES ('{}', '{}', '{}', '{}', '{}', 
-                    '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
+                    `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`, `vehicle_repaired`) VALUES ('{}', '{}', '{}', '{}', '{}', 
+                    '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
                 vehicle.vehicle_vin, vehicle.vehicle_make, vehicle.vehicle_model, vehicle.vehicle_year,
                 vehicle.vehicle_color,
                 vehicle.vehicle_miles, vehicle.vehicle_condition, vehicle.vehicle_style, vehicle.vehicle_interior_color,
-                vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold)
+                vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold, isRepaired)
             cursor = self.query(query)
             vehicle_id = cursor.lastrowid
 
@@ -329,6 +340,32 @@ class Database:
                 result.append(VehicleProblem.fromNamedTuple(problem))
         cursor.close()
         return result
+
+    def getRemainingVehicleProblems(self, vehicle_id):
+        query = "SELECT * from vehicle_problems WHERE vehicle_id ='{}' AND `actual_repair_cost` is NULL".format(vehicle_id)
+        cursor = self.query(query)
+        result = []
+        if cursor.rowcount:
+            for problem in cursor:
+                result.append(VehicleProblem.fromNamedTuple(problem))
+        cursor.close()
+        return result
+
+    def fixVehicleProblem(self, vehicle_id, vehicle_problem_id, cost):
+        query = """UPDATE `vehicle_problems` SET `actual_repair_cost` = '{}' 
+        WHERE `vehicle_id` = '{}' AND `vehicle_problem_id` = {}""".format(cost, vehicle_id, vehicle_problem_id)
+        self.query(query)
+
+        query = "SELECT * from vehicle_problems WHERE vehicle_id ='{}' AND `actual_repair_cost` is NULL".format(
+            vehicle_id)
+        cursor = self.query(query)
+        remainingRepairs = cursor.rowcount
+
+        if remainingRepairs == 0:
+            query = "UPDATE `vehicle` SET `vehicle_repaired` = '1' WHERE `vehicle_id` = '{}'".format(vehicle_id)
+            self.query(query)
+
+        self.cnx.commit()
 
     def insertSalesPerson(self, salesperson):
         query = """INSERT INTO `sales_people` (`salesperson_name`, `salesperson_phone`) VALUES ('{}', '{}')""".format(
@@ -482,8 +519,8 @@ class Database:
             employmentIndex += 1
             query = """INSERT INTO `warranty` (warranty_sale_id, warranty_start_date, warranty_length, warranty_cost, warranty_deductable) 
             VALUES ('{}', '{}', '{}', '{}', '{}')""".format(warrantySaleId,
-                warranty.warranty_start_date, warranty.warranty_length,
-                warranty.warranty_cost, warranty.warranty_deductable)
+                                                            warranty.warranty_start_date, warranty.warranty_length,
+                                                            warranty.warranty_cost, warranty.warranty_deductable)
             cursor = self.query(query)
             warranty_id = cursor.lastrowid
 
@@ -495,8 +532,6 @@ class Database:
                     warrantySaleId, warranty_id, warranty_item_list.item_id)
                 cursor = self.query(query)
                 warranty_item_list_id = cursor.lastrowid
-
-
 
         # commit these changes
         self.cnx.commit()
@@ -548,3 +583,103 @@ class Database:
             result.append(WarrantyItemListEntry.fromNamedTuple(warranty))
         self.closeCursor(cursor)
         return result
+
+    def getPurchasesByCustomerId(self, customer_id):
+        cursor = self.query("SELECT * FROM sale WHERE `customer_id` = {}".format(customer_id))
+        result = []
+        for warranty in cursor:
+            result.append(VehicleSale.fromNamedTuple(warranty))
+        self.closeCursor(cursor)
+        return result
+
+    def getPaymentInfoByCustomerId(self, customer_id):
+        cursor = self.query("SELECT * FROM payment_history WHERE `customer_id` = {}".format(customer_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        try:
+            return PaymentHistory.fromNamedTuple(result)
+        except AttributeError:
+            return None
+
+    def getPaymentById(self, payment_id):
+        cursor = self.query("SELECT * FROM payments WHERE `payment_id` = {}".format(payment_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = cursor.fetchone()
+        self.closeCursor(cursor)
+        try:
+            return Payment.fromNamedTuple(result)
+        except AttributeError:
+            return None
+
+    def getPayments(self, customer_id):
+        cursor = self.query("SELECT * FROM payments WHERE `customer_id` = {}".format(customer_id))
+        result = []
+        for warranty in cursor:
+            result.append(Payment.fromNamedTuple(warranty))
+        self.closeCursor(cursor)
+        return result
+
+    def makePayment(self, payment):
+
+        history = self.getPaymentInfoByCustomerId(payment.customer_id)
+
+        query = "SELECT * from `payments` WHERE `customer_id` = {}".format(payment.customer_id)
+        cursor = self.query(query)
+        totalPayments = cursor.rowcount
+
+        # we need to skip this insert if the customer exists
+        query = """
+        INSERT INTO `payments` (customer_id, vehicle_id, payment_date, payment_amount_due, payment_paid_date,
+                 payment_amount, payment_bank_account) VALUES ('{}', 
+        '{}', '{}', '{}', '{}', '{}', '{}')
+        """.format(
+            payment.customer_id, payment.vehicle_id,
+            payment.payment_date,
+            payment.payment_amount_due,
+            payment.payment_paid_date,
+            payment.payment_amount, payment.payment_bank_account)
+
+        cursor = self.query(query)
+        payment_id = cursor.lastrowid
+
+        cursor = self.query("SELECT * FROM payment_history WHERE `customer_id` = {}".format(payment.customer_id))
+        result = None
+        if cursor.rowcount == 0:
+            history = PaymentHistory(payment.customer_id, 0, 0)
+            query = """INSERT into `payment_history` (`customer_id`, `number_late_payments`, `average_days_late`) 
+            VALUES ('{}', {}, {})""".format(payment.customer_id, history.number_late_payments,
+                                            history.average_days_late)
+            self.query(query)
+
+        # is this payment late?
+        '''
+        if datetime.(payment.payment_date) < datetime.strptime(payment.payment_paid_date):
+            payment.number_late_payments += 1
+
+            payment.average_days_late = ((payment.average_days_late * totalPayments) + (datetime.datetime(payment.payment_paid_date) - datetime.datetime(payment.payment_date))/ (totalPayments + 1)
+
+
+            query = """UPDATE `payment_history` SET (`number_late_payments` = '{}', average_days_late = '{}') WHERE
+                    `customer_id` = '{}'""".format(history.number_late_payments, history.average_days_late,
+                                                   payment.customer_id)
+            self.query(query)
+            '''
+        self.cnx.commit()
+
+        return payment_id
+
+    def getPaymentReport(self, payment_id):
+        payment = self.getPaymentById(payment_id)
+        print(payment)
+        pass
+
+    def getPaymentHistoryReport(self, customer_id):
+        history = self.getPaymentInfoByCustomerId(customer_id)
+        print(history)
+        payments = self.getPayments(customer_id)
+        for payment in payments:
+            print(payment)
+        pass

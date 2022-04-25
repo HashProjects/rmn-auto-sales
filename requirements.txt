@@ -2,3 +2,6 @@ tkinter
 ttkwidgets
 tksheet
 mysql-connector-python
+dateutil
+requests
+tkhtmlview

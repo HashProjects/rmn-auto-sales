@@ -24,7 +24,7 @@ class PaymentHistory:
         html = "<h1>Payment History</h1>"
 
         html += """
-                <p><b>Customer:</b> {} {} <b>Gender:</b> {} DOB: {} Tax Payer ID: {}</p>
+                <p><b>Customer:</b> {} {} <b>Gender:</b> {} <b>DOB:</b> {} <b>Tax Payer ID:</b> {}</p>
                 <b>Late Payments:</b> {}<br/>
                 <b>Average Days Late:</b> {}
                 """.format(self.customer.customer_first_name, self.customer.customer_last_name,
@@ -33,13 +33,19 @@ class PaymentHistory:
                            self.number_late_payments, self.average_days_late)
 
         html += "<pre>"
-        html += """{:14} {} {} {} {}\n""".format("Payment Date", "Amount Due", "Paid Date", "Amount", "Bank Account")
+        html += """{:14} {:12} {:10} {:10} {:5} {:12}\n""".format("Payment Date", "Amount Due", "Paid Date", "Amount",
+                                                                  "Late", "Bank Account")
         for payment in self.payments:
-            html += """{:14} {:,} {} {} {}\n""".format(payment.payment_date.strftime("%m/%d/%y"),
-                                                       payment.payment_amount_due,
-                                                       payment.payment_paid_date.strftime("%m/%d/%y"),
-                                                       payment.payment_amount,
-                                                       payment.payment_bank_account)
+            lateValue = ""
+            if payment.isLate():
+                lateValue = "Late"
+            html += """{:14} ${:<11,} {:10} ${:<9,} {:5} {:12}\n""".format(payment.payment_date.strftime("%m/%d/%y"),
+                                                                           payment.payment_amount_due,
+                                                                           payment.payment_paid_date.strftime(
+                                                                               "%m/%d/%y"),
+                                                                           payment.payment_amount,
+                                                                           lateValue,
+                                                                           payment.payment_bank_account)
 
         html += "</pre>"
         return html

@@ -20,4 +20,9 @@ class Payment:
         self.payment_bank_account = payment_bank_account
 
     def __str__(self):
-        return "Payment({} {})".format(self.payment_paid_date, self.payment_amount_due)
+        return "Payment(paid on {} {}, due on {} {}, late={})".format(self.payment_paid_date.strftime("%m/%d/%y"), self.payment_amount,
+                                                self.payment_date.strftime("%m/%d/%y"), self.payment_amount_due,
+                                                self.isLate())
+
+    def isLate(self):
+        return self.payment_date < self.payment_paid_date

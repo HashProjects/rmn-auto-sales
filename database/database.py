@@ -628,7 +628,14 @@ class Database:
 
         query = "SELECT * from `payments` WHERE `customer_id` = {}".format(payment.customer_id)
         cursor = self.query(query)
+        latePayments = 0
+        daysLate = 0
+        for p in cursor:
+            if p.payment_paid_date > p.payment_date:
+                latePayments += 1
+                daysLate += (p.payment_paid_date - p.payment_date).days
         totalPayments = cursor.rowcount
+        averageDaysLate = daysLate // latePayments
 
         # we need to skip this insert if the customer exists
         query = """
@@ -655,18 +662,17 @@ class Database:
             self.query(query)
 
         # is this payment late?
-        '''
-        if datetime.(payment.payment_date) < datetime.strptime(payment.payment_paid_date):
-            payment.number_late_payments += 1
 
-            payment.average_days_late = ((payment.average_days_late * totalPayments) + (datetime.datetime(payment.payment_paid_date) - datetime.datetime(payment.payment_date))/ (totalPayments + 1)
+        if payment.payment_date < payment.payment_paid_date:
 
+            history.average_days_late = ((averageDaysLate * latePayments) + (payment.payment_paid_date - payment.payment_date).days)/ (latePayments + 1)
+            history.number_late_payments = latePayments + 1
 
-            query = """UPDATE `payment_history` SET (`number_late_payments` = '{}', average_days_late = '{}') WHERE
+            query = """UPDATE `payment_history` SET `number_late_payments` = '{}', average_days_late = '{}' WHERE
                     `customer_id` = '{}'""".format(history.number_late_payments, history.average_days_late,
                                                    payment.customer_id)
             self.query(query)
-            '''
+
         self.cnx.commit()
 
         return payment_id

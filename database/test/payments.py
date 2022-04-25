@@ -32,7 +32,14 @@ sale = random.choice(result)
 customer = DB.getCustomerById(sale.customer_id)
 
 
-payment = Payment(customer.customer_id, 0, sale.vehicle_id, "2022-04-21", 1000, "2022-04-22", 1000, "389383-93939")
+datePaid = datetime.date.today()
+change = random.randint(-5, 6)
+if datePaid.day + change < 0:
+    change = 0
+elif datePaid.day + change > 28:
+    change = 0
+datePaid = datePaid.replace(datePaid.year, datePaid.month, datePaid.day + change)
+payment = Payment(customer.customer_id, 0, sale.vehicle_id, datetime.date.today(), 1000, datePaid, 1000, "389383-93939")
 
 payment_id = DB.makePayment(payment)
 

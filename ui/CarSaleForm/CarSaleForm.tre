@@ -1,0 +1,25 @@
+PAGE
+    Toplevel: Toplevel 0
+        Label: Sale  
+        Label: Date  
+        Label: TotalDue  
+        Label: DownPayment  
+        Label: FinancedAmount  
+        Entry: DateEntry  
+        Entry: TotalDueEntry  
+        Entry: DownPaymentEntry  
+        Entry: FinancedAmountEntry  
+        Label: Salesperson  
+        Entry: CommissionEntry  
+        Label: Commission  
+        Spinbox: SalespersonSpinbox   command: SalespersonNames
+        Label: Customer  
+        Text: CustomerDetailsText  
+        Button: SelectCustomer   command: SelectCustomer
+        Text: CarDetailsText  
+        Button: SelectVehicle   command: SelectVehicle
+        Button: Submit   command: Submit
+        Button: AddWorkHistory   command: AddWorkHistory
+    Toplevel: Toplevel 1
+        Menu Bar
+

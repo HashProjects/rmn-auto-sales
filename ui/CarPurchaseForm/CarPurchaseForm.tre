@@ -1,0 +1,50 @@
+PAGE
+    Toplevel: Toplevel 0
+        Label: Purchase  
+        Label: Date  
+        Label: Location  
+        Label: Make  
+        Label: Model  
+        Label: Year  
+        Label: Miles  
+        Label: Condition  
+        Label: Model_1_1_1_1  
+        Label: SalesPrice  
+        Label: Style  
+        Label: InteriorColor  
+        Label: Vehicle1  
+        Label: SellerDealer  
+        Label: TaxId  
+        Button: Button1   command: AddVehicle
+        Button: Submit   command: Submit
+        Entry: DateEntry  
+        Entry: LocationEntry  
+        Entry: MakeEntry  
+        Entry: ModelEntry  
+        Entry: YearEntry  
+        Entry: MilesEntry  
+        Entry: ConditionEntry  
+        Entry: ListEntry  
+        Entry: SalesPriceEntry  
+        Entry: StyleEntry  
+        Entry: InteriorColorEntry  
+        Entry: SellerDealerEntry  
+        Entry: TaxIDEntry  
+    Toplevel: Error Information
+        
+             command: 
+        set exit_flag 1
+        set exitvar 1
+    
+             command: 
+        vTcl:save_err_msg
+        set exit_flag 1
+        set exitvar 1
+    
+             command: 
+        destroy .err_top
+       set exit_flag 0 
+        set exitvar 1
+    
+        
+

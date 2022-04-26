@@ -1,0 +1,27 @@
+PAGE
+    Toplevel: Toplevel 0
+        Label: FirstName  
+        Label: Address  
+        Label: State  
+        Label: DOB  
+        Label: Gender  
+        Text: FirstNameText  
+        Text: AddressText  
+        Menu Bar
+        Text: StateText  
+        Text: DOBText  
+        Text: GenderText  
+        Label: LastName  
+        Label: City  
+        Label: Zip  
+        Label: TaxID  
+        Label: Phone  
+        Text: LastNameText  
+        Text: CityText  
+        Text: ZipText  
+        Text: TaxIDText  
+        Text: PhoneText  
+        Label: SelectCustomer  
+        Button: Search   command: Search
+        Button: AddNewCustomer   command: AddNewCustomer
+

@@ -10,8 +10,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
+from database.employment import CustomerEmployment
 from ui.AddCustomerEmployerForm import AddCustomerEmployerForm
-employment = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -24,13 +24,25 @@ def main(*args):
     _w1 = AddCustomerEmployerForm.Toplevel1(_top1)
     root.mainloop()
 
+callback = None
+
 def Submit(*args):
     print('AddCustomerEmployerForm_support.Submit')
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
 
-callback = None
+    employment = CustomerEmployment(0, 0, _w1.employerValue.get(),
+                                    _w1.titleValue.get(),
+                                    _w1.supervisorValue.get(),
+                                    _w1.phoneValue.get(),
+                                    _w1.addressValue.get(),
+                                    _w1.startDateValue.get(),
+                                    _w1.endDateValue.get())
+    global callback
+    if callback is not None:
+        callback(employment)
+
 
 def addEmployer(addEmployerCallback):
     global callback

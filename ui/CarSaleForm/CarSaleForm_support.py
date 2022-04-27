@@ -5,7 +5,7 @@
 #  in conjunction with Tcl version 8.6
 #    Apr 25, 2022 08:05:00 AM PDT  platform: Windows NT
 #    Apr 27, 2022 10:40:15 AM PDT  platform: Linux
-
+import datetime
 import sys
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -13,12 +13,17 @@ from tkinter.constants import *
 
 import CarSaleForm
 import ui
+from database.database import Database
+from database.sale import VehicleSale
 from ui import CustomerADDorSelectForm
 from ui.AddCustomerEmployerForm import AddCustomerEmployerForm
 from ui.AddCustomerEmployerForm import AddCustomerEmployerForm_support
 from ui.CustomerADDorSelectForm import CustomerADDorSelectForm_support
+from ui.VehicleSearch import vehicle_search_support
 
 employment_history = []
+customerData = None
+vehicleData = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -30,7 +35,24 @@ def main(*args):
     _top1 = root
     # _w1 = CarSaleForm.Toplevel1(_top1)
     _w1 = CarSaleForm.VehicleSaleForm(_top1)
+    init()
     root.mainloop()
+
+def init():
+    db = Database()
+
+    results = db.searchSalesPeople()
+    value_list = []
+    for sp in results:
+        value_list.append(sp.salesperson_id)
+
+    _w1.SalespersonSpinbox.configure(values=value_list)
+
+    # set date
+    _w1.dateValue.set(datetime.date.today())
+
+    db.close()
+
 
 def AddWorkHistory(*args):
     print('CarSaleForm_support.AddWorkHistory')
@@ -41,6 +63,12 @@ def AddWorkHistory(*args):
 
 def addEmployer(employment):
     employment_history.append(employment)
+    print (employment)
+    # display
+
+    _w1.WorkHistory.delete("1.0", END)
+    for employment in employment_history:
+        _w1.WorkHistory.insert("1.0", employment.getText())
 
 def SalespersonNames(*args):
     print('CarSaleForm_support.SalespersonNames')
@@ -58,6 +86,8 @@ def SelectCustomer(*args):
 def customerSelected(customer):
     print("customer selected:", customer)
     _w1.CustomerDetailsText.insert("1.0", customer.getText())
+    global customerData
+    customerData = customer
     pass
 
 def SelectVehicle(*args):
@@ -65,12 +95,34 @@ def SelectVehicle(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
+    vehicle_search_support.selectVehicle(vehicleSelected)
+
+def vehicleSelected(vehicle):
+    global vehicleData
+    vehicleData = vehicle
 
 def Submit(*args):
     print('CarSaleForm_support.Submit')
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
+    db = Database()
+
+    sale = VehicleSale(0, _w1.dateValue.get(),
+                       _w1.totalDueValue.get(),
+                       _w1.downPaymentValue.get(),
+                       _w1.financedAmount.get(),
+                       _w1.SalespersonSpinbox.get(),
+                       _w1.commissionValue.get(),
+                       vehicleData.vehicle_id,
+                       customerData.customer_id)
+    sale.setCustomer(customerData)
+    sale.setVehicle(vehicleData)
+    sale.setCustomEmployment(employment_history)
+
+    db.sellVehicle(sale)
+
+    db.close()
 
 if __name__ == '__main__':
     CarSaleForm.start_up()

@@ -30,6 +30,9 @@ class CustomerEmployment:
     def __str__(self):
         return "CustomerEmployment({}: {}, {})".format(self.employer, self.supervisor, self.supervisor_phone)
 
+    def getText(self):
+        return "{} {}: {}, {}".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
+
 
 def generateRandomEmployment(customer):
     return CustomerEmployment(0,

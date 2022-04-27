@@ -10,7 +10,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-import AddCustomerEmployerForm
+from ui.AddCustomerEmployerForm import AddCustomerEmployerForm
+employment = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -28,6 +29,15 @@ def Submit(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
+
+callback = None
+
+def addEmployer(addEmployerCallback):
+    global callback
+    global employment
+    callback = addEmployerCallback
+    employment = None
+    AddCustomerEmployerForm.start_up()
 
 if __name__ == '__main__':
     AddCustomerEmployerForm.start_up()

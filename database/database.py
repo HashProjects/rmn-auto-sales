@@ -94,16 +94,16 @@ class Database:
             # add where clauses
             query += " WHERE "
             needsAnd = False
-            if customer_last_name is not None:
+            if is_not_empty(customer_last_name):
                 query += " `customer_last_name` = '{}'".format(customer_last_name)
                 needsAnd = True
 
-            if customer_first_name is not None:
+            if is_not_empty(customer_first_name):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `customer_first_name` = '{}'".format(customer_first_name)
                 needsAnd = True
 
-            if customer_taxpayer_id is not None:
+            if is_not_empty(customer_taxpayer_id):
                 query = appendAndIfNeeded(query, needsAnd)
                 query += " `customer_taxpayer_id` = '{}'".format(customer_taxpayer_id)
 

@@ -10,7 +10,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-import AddCustomerEmployerForm_support
+from ui.AddCustomerEmployerForm import AddCustomerEmployerForm_support
+
 
 class Toplevel1:
     def __init__(self, top=None):

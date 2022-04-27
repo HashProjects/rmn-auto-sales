@@ -27,6 +27,16 @@ class Customer:
     def __str__(self):
         return "Customer({} {}, dob={})".format(self.customer_first_name, self.customer_last_name, self.customer_dob)
 
+    def getText(self):
+        return """{}, {}  {}\n
+        {}
+        {}, {} {}
+        {}, {}
+        SSN: {}
+        """.format(self.customer_last_name, self.customer_first_name, self.customer_phone, self.customer_address,
+                   self.customer_city, self.customer_state, self.customer_zip, self.customer_gender,
+                   self.customer_dob, self.customer_taxpayer_id)
+
 
 def generateRandomCustomer():
     return Customer(0,

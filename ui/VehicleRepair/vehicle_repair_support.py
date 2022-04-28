@@ -6,6 +6,7 @@
 #    Apr 18, 2022 12:43:43 PM PDT  platform: Linux
 #    Apr 18, 2022 12:47:19 PM PDT  platform: Linux
 #    Apr 18, 2022 12:52:15 PM PDT  platform: Linux
+#    Apr 28, 2022 02:51:47 PM PDT  platform: Linux
 
 import sys
 import tkinter as tk
@@ -15,12 +16,11 @@ import tksheet
 import ui
 from database import database
 from database.database import Database
-from ui import VehicleSearch
-from ui.VehicleSearch import vehicle_search
-from ui.VehicleSearch.vehicle_search import VehicleSearchForm
+from ui.VehicleRepair import vehicle_repair
+from ui.VehicleRepair.vehicle_repair import VehicleSearchForm
 
-DB = database.Database()
-
+vehicleData = None
+problemData = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -35,20 +35,21 @@ def main(*args):
     root.mainloop()
 
 topLevel = None
+
 def start(*args):
     '''Main entry point for the application.'''
     global topLevel
     topLevel = tk.Toplevel()
     topLevel.protocol('WM_DELETE_WINDOW', topLevel.destroy)
+
     # Creates a toplevel widget.
     global _top2, _w2
-    _top2 = topLevel
-    _w2 = VehicleSearchForm(_top2)
+    _top2 = tk.Toplevel(topLevel)
+    _w2 = vehicle_repair.VehicleSearchForm(_top2)
     init(_top2, _w2)
     root.mainloop()
 
 Custom = tksheet.Sheet  # To be updated by user with name of custom widget.
-
 
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
@@ -61,7 +62,7 @@ def init(top, gui, *args, **kwargs):
     # Call a separate function to initialise the sheet (data grid) widget.
     initialise_custom_widget()
     do_vehicle_search()
-
+    clearCurrentProblem()
 
 def do_vehicle_search(*args):
     print('vehicle_search_support.do_vehicle_search')
@@ -71,7 +72,9 @@ def do_vehicle_search(*args):
     db = Database()
     results = db.searchVehicles(vehicle_year=_w2.yearValue.get(),
                                 vehicle_make=_w2.makeValue.get(),
-                                vehicle_color=_w2.colorValue.get())
+                                vehicle_color=_w2.colorValue.get(),
+                                vehicle_sold=False,
+                                vehicle_repaired=False)
 
     count = _w2.Custom1.get_total_rows()
     for i in range(count-1, -1, -1):
@@ -85,6 +88,7 @@ def do_vehicle_search(*args):
     _w2.Custom1.set_all_column_widths()
 
     _w2.Custom1.bind("<Double-Button-1>", doubleClick)
+    _w2.Custom2.bind("<Double-Button-1>", doubleClickProblem)
     db.close()
 
 def doubleClick(event):
@@ -94,11 +98,42 @@ def doubleClick(event):
     rowData = _w2.Custom1.get_cell_data(row, 0)
     print(rowData)
     db = Database()
-    vehicle = db.getVehicleById(rowData)
-    if callback is not None:
-        callback(vehicle)
+    problems = db.getRemainingVehicleProblems(rowData)
+    global vehicleData
+    vehicleData = db.getVehicleById(rowData)
+    showRemainingProblems(problems)
     db.close()
 
+def showRemainingProblems(problems):
+    print (problems)
+
+    #delete existing data
+    count = _w2.Custom2.get_total_rows()
+    for i in range(count-1, -1, -1):
+        _w2.Custom2.delete_row(i)
+
+    for problem in problems:
+        print(problem)
+        _w2.Custom2.insert_row([problem.problem_id, problem.problem_description, problem.estimated_repair_cost],
+                               redraw=True)
+
+    _w2.Custom2.set_all_column_widths()
+
+def doubleClickProblem(event):
+    print("double click problem:", event)
+    row = _w2.Custom2.identify_row(event)
+    print (row)
+    rowData = _w2.Custom2.get_cell_data(row, 0)
+    print(rowData)
+    db = Database()
+    global problemData
+    problemData = db.getVehicleProblemById(rowData, vehicleData.vehicle_id)
+    showProblem(problemData)
+    db.close()
+
+def showProblem(problem):
+    global _w2
+    _w2.problemValue.set(problem.getText())
 
 def formatSheet(rows):
     """ Set up various formatting options for the data grid.  """
@@ -119,6 +154,19 @@ def formatSheet(rows):
             if float(value) < 0:
                 w.Custom1.highlight_cells(row=row, column=5, fg='white', bg='red')
 
+    w.Custom2.column_width(1, 100)
+
+    # Change column alignment
+    w.Custom2.align_columns(2, 'center')
+    w.Custom2.align_columns(3, 'center')
+
+    # Highlight any cells that meet a condition - a Balance that is negative.
+    for row in range(0, rows):
+        value = w.Custom2.get_cell_data(row, 3)
+        if value != ' ' and value != '':
+            if float(value) < 0:
+                w.Custom2.highlight_cells(row=row, column=3, fg='white', bg='red')
+
 
 def initialise_custom_widget():
     """
@@ -130,14 +178,16 @@ def initialise_custom_widget():
     """
 
     # global _w2
-    head = ['id', 'Year', 'Make', 'Model', 'Color', 'Condition']
+    head = ['#', 'Year', 'Make', 'Model', 'Color', 'Condition']
     # and apply them to the data grid.
     _w2.Custom1.headers(head, redraw=True)
 
+    head2 = ['#', 'Problem', 'Estimated Cost']
+    # and apply them to the data grid.
+    _w2.Custom2.headers(head2, redraw=True)
+
     # Enable a subset of the built-in class event handlers. These don't need to
     # be defined here, they are included in the class.
-
-
 
     # This code has an error
     w.Custom1.enable_bindings(
@@ -155,9 +205,24 @@ def initialise_custom_widget():
         #"edit_cell"
         )
 
+    # This code has an error
+    w.Custom2.enable_bindings(
+        "single_select",
+        #"drag_select",
+        "column_select",
+        "row_select",
+        "column_width_resize",
+        "row_height_resize",
+        "copy",
+        "cut",
+        #"paste",
+        #"delete",
+        #"undo",
+        #"edit_cell"
+        )
+
     # Additional event handlers that require a local definition.
     # w.Custom1.extra_bindings([('cell_select', cell_select)])
-
 
 callback = None
 
@@ -166,5 +231,32 @@ def selectVehicle(vehicleCallback):
     callback = vehicleCallback
     start()
 
+def repair_vehicle(*args):
+    print('vehicle_repair_support.repair_vehicle')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+
+    db = Database()
+    global vehicleData
+    global problemData
+    db.fixVehicleProblem(vehicleData.vehicle_id, problemData.problem_id, _w2.actualCostValue.get())
+
+    remainingProblems = db.getRemainingVehicleProblems(vehicleData.vehicle_id)
+    db.close()
+    showRemainingProblems(remainingProblems)
+    clearCurrentProblem()
+
+def clearCurrentProblem():
+    global problemData
+    problemData = None
+    _w2.problemValue.set("No problem detected")
+    _w2.actualCostValue.set("")
+
 if __name__ == '__main__':
-    vehicle_search.start_up()
+    vehicle_repair.start_up()
+
+
+
+
+

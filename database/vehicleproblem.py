@@ -20,6 +20,9 @@ class VehicleProblem:
     def __str__(self):
         return "VehicleProblem({}. {} - ${})".format(self.problem_id, self.problem_description, self.estimated_repair_cost)
 
+    def getText(self):
+        return "{} - ${}".format(self.problem_description, self.estimated_repair_cost)
+
 
 def generateRandomProblem():
     return VehicleProblem(0, 0, 0, random.choice(["Flat Tire", "Broken Tail Light", "Cracked Windshield", "Dirty Oil", "Low Transmission Fluid"]),

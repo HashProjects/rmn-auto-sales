@@ -353,7 +353,7 @@ class Database:
 
     def fixVehicleProblem(self, vehicle_id, vehicle_problem_id, cost):
         query = """UPDATE `vehicle_problems` SET `actual_repair_cost` = '{}' 
-        WHERE `vehicle_id` = '{}' AND `vehicle_problem_id` = {}""".format(cost, vehicle_id, vehicle_problem_id)
+        WHERE `vehicle_id` = '{}' AND `problem_id` = {}""".format(cost, vehicle_id, vehicle_problem_id)
         self.query(query)
 
         query = "SELECT * from vehicle_problems WHERE vehicle_id ='{}' AND `actual_repair_cost` is NULL".format(
@@ -702,3 +702,13 @@ class Database:
         for payment in payments:
             print(payment)
         pass
+
+    def getVehicleProblemById(self, problem_id, vehicle_id):
+        query = "SELECT * from vehicle_problems WHERE problem_id = '{}' AND vehicle_id ='{}'".format(problem_id,
+                                                                                                      vehicle_id)
+        cursor = self.query(query)
+        result = None
+        if cursor.rowcount:
+            result = VehicleProblem.fromNamedTuple(cursor.fetchone())
+        cursor.close()
+        return result

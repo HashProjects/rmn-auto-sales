@@ -35,3 +35,15 @@ class VehicleSale:
 
     def __str__(self):
         return "Sale({}: {})".format(self.sale_date, self.total_due)
+
+    def getHtml(self):
+        return """<h1>Vehicle Sale Report</h1>
+        <b>Date</b>: {}<br/>
+        <b>Total Due:</b> {}<br/>
+        <b>Down Payment:</b> {}<br/>
+        <h2>Customer Information</h2>
+        {}
+        <h2>Vehicle Sold</h2>
+        {} 
+        """.format(self.sale_date.strftime("%m/%d/%y"), self.total_due, self.down_payment, self.customer.getHtml(),
+                   self.vehicle.getHtml())

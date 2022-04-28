@@ -5,11 +5,15 @@
 #  in conjunction with Tcl version 8.6
 #    Apr 25, 2022 08:05:00 AM PDT  platform: Windows NT
 #    Apr 27, 2022 10:40:15 AM PDT  platform: Linux
+#    Apr 27, 2022 06:46:54 PM PDT  platform: Linux
+#    Apr 27, 2022 07:39:39 PM PDT  platform: Linux
 import datetime
 import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
+
+import tkhtmlview
 
 import CarSaleForm
 import ui
@@ -20,6 +24,7 @@ from ui.AddCustomerEmployerForm import AddCustomerEmployerForm
 from ui.AddCustomerEmployerForm import AddCustomerEmployerForm_support
 from ui.CustomerADDorSelectForm import CustomerADDorSelectForm_support
 from ui.VehicleSearch import vehicle_search_support
+from ui.generic_report import generic_report_support
 
 employment_history = []
 customerData = None
@@ -50,25 +55,31 @@ def init():
 
     # set date
     _w1.dateValue.set(datetime.date.today())
+    _w1.totalDueValue.set("8000")
+    _w1.downPaymentValue.set("5000")
+    _w1.commissionValue.set("1000")
+    _w1.financedAmount.set("3000")
 
     db.close()
-
 
 def AddWorkHistory(*args):
     print('CarSaleForm_support.AddWorkHistory')
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
-    AddCustomerEmployerForm_support.addEmployer(addEmployer)
+    AddCustomerEmployerForm_support.addEmployer(customerData, addEmployer)
 
 def addEmployer(employment):
     employment_history.append(employment)
     print (employment)
     # display
 
-    _w1.WorkHistory.delete("1.0", END)
+    html = "<pre>"
+    html += "{:14} {:16} {:16} {:14}\n".format("Title", "Employer", "Supervisor", "Phone")
     for employment in employment_history:
-        _w1.WorkHistory.insert("1.0", employment.getText())
+        html += employment.getHtml()
+    _w1.Custom1.set_html(html + "</pre>")
+
 
 def SalespersonNames(*args):
     print('CarSaleForm_support.SalespersonNames')
@@ -100,6 +111,9 @@ def SelectVehicle(*args):
 def vehicleSelected(vehicle):
     global vehicleData
     vehicleData = vehicle
+    print(vehicle)
+    _w1.CarDetailsText.delete("1.0", END)
+    _w1.CarDetailsText.insert("1.0", vehicle.getText())
 
 def Submit(*args):
     print('CarSaleForm_support.Submit')
@@ -120,9 +134,13 @@ def Submit(*args):
     sale.setVehicle(vehicleData)
     sale.setCustomEmployment(employment_history)
 
-    db.sellVehicle(sale)
+    sale_id = db.sellVehicle(sale)
+
+    generic_report_support.displayReport(db.getSaleReport(sale_id).getHtml(), "Vehicle Sale Report")
 
     db.close()
+
+Custom = tkhtmlview.HTMLScrolledText  # To be updated by user with name of custom widget.
 
 if __name__ == '__main__':
     CarSaleForm.start_up()

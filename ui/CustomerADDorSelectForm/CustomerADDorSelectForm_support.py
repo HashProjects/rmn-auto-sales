@@ -66,7 +66,7 @@ def Search(*args):
 
     if len(results) > 0:
         print(results[0])
-    if results is not None and len(results) == 1:
+    if results is not None:
         global customer
         customer = results[0]
         _w1.PhoneText.delete("1.0", "end-1c")

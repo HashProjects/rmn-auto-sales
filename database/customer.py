@@ -37,6 +37,16 @@ class Customer:
                    self.customer_city, self.customer_state, self.customer_zip, self.customer_gender,
                    self.customer_dob, self.customer_taxpayer_id)
 
+    def getHtml(self):
+        return """<b>LastName:</b> {}  <b>FirstName:</b>  {}  <b>Phone:</b> {}<br/>
+        <b>Address</b>:<br/>
+        {}<br/>
+        {}, {} {}<br/>
+        <b>Gender:</b>{}, <b>Date of Birth:</b>{}<br/>
+        SSN: {}
+        """.format(self.customer_last_name, self.customer_first_name, self.customer_phone, self.customer_address,
+                   self.customer_city, self.customer_state, self.customer_zip, self.customer_gender,
+                   self.customer_dob, self.customer_taxpayer_id)
 
 def generateRandomCustomer():
     return Customer(0,

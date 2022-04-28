@@ -414,18 +414,27 @@ class Database:
 
         customer = vehicleSale.customer
         # we need to skip this insert if the customer exists
-        query = """
-        INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, 
-        customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{}', 
-        '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
-        """.format(
-            customer.customer_phone, customer.customer_last_name,
-            customer.customer_first_name, customer.customer_address, customer.customer_city,
-            customer.customer_state, customer.customer_zip, customer.customer_gender,
-            customer.customer_dob, customer.customer_taxpayer_id)
-
+        query = "SELECT * FROM `customer` WHERE `customer_taxpayer_id` = {}".format(customer.customer_taxpayer_id)
         cursor = self.query(query)
-        customer_id = cursor.lastrowid
+
+        if cursor.rowcount == 0:
+            query = """
+            INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, 
+            customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{}', 
+            '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')
+            """.format(
+                customer.customer_phone, customer.customer_last_name,
+                customer.customer_first_name, customer.customer_address, customer.customer_city,
+                customer.customer_state, customer.customer_zip, customer.customer_gender,
+                customer.customer_dob, customer.customer_taxpayer_id)
+
+            cursor = self.query(query)
+            customer_id = cursor.lastrowid
+        else:
+            customer_id = Customer.fromNamedTuple(cursor.fetchone()).customer_id
+
+
+        cursor.close()
 
         query = """INSERT into `sale` (sale_id, sale_date, total_due, down_payment, financed_amount, 
         employee_id, employee_commission, vehicle_id, customer_id) VALUES ('{}','{}', 
@@ -466,19 +475,23 @@ class Database:
         return sale_id
 
     def getSaleReport(self, sale_id):
-        sale = self.getVehicleSaleById(sale_id)
+        vehicleSale = self.getVehicleSaleById(sale_id)
 
-        vehicle = self.getVehicleById(sale.vehicle_id)
+        vehicle = self.getVehicleById(vehicleSale.vehicle_id)
+        vehicleSale.setVehicle(vehicle)
 
-        customer = self.getCustomerById(sale.customer_id)
+        customer = self.getCustomerById(vehicleSale.customer_id)
+        vehicleSale.setCustomer(customer)
 
         history = self.getCustomerEmploymentHistory(customer.customer_id)
+        vehicleSale.setCustomEmployment(history)
 
-        print(sale)
+        print(vehicleSale)
         print("  ", customer)
         for item in history:
             print("    ", item)
         print("  ", vehicle)
+        return vehicleSale
 
     def getVehicleSaleById(self, sale_id):
         cursor = self.query("SELECT * FROM sale WHERE `sale_id` = {}".format(sale_id))

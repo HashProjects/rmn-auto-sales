@@ -1,5 +1,5 @@
 PAGE
-    Toplevel: Toplevel 0
+    Toplevel: Vehicle Sale
         Label: Sale  
         Label: Date  
         Label: TotalDue  
@@ -20,6 +20,6 @@ PAGE
         Button: SelectVehicle   command: SelectVehicle
         Button: Submit   command: Submit
         Button: AddWorkHistory   command: AddWorkHistory
-    Toplevel: Toplevel 1
-        Menu Bar
+        Text: WorkHistory  
+        Label: Customer_1  
 

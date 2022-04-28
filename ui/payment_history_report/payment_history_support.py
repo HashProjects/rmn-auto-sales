@@ -36,7 +36,6 @@ def init():
     db = Database()
 
     customer =db.getCustomerById(30)
-    #random.choice(db.searchCustomers())
     history = db.getPaymentInfoByCustomerId(customer.customer_id)
 
     payments = db.getPayments(customer.customer_id)

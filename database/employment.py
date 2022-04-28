@@ -31,7 +31,10 @@ class CustomerEmployment:
         return "CustomerEmployment({}: {}, {})".format(self.employer, self.supervisor, self.supervisor_phone)
 
     def getText(self):
-        return "{} {}: {}, {}".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
+        return "{} {}: {}, {}\n".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
+
+    def getHtml(self):
+        return "{:14} {:16} {:16} {:14}\n".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
 
 
 def generateRandomEmployment(customer):

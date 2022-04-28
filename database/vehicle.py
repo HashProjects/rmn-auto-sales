@@ -42,11 +42,26 @@ class Vehicle:
             self.vehicle_repaired)
 
     def getHtml(self):
-        html = """<p>Year: {} Make: {} Model: {}<br/>
-                  VIN: {}
-                  {} {} {} {} {} {}
+        html = """<p><b>Year:</b> {} <b>Make:</b> {} <b>Model:</b> {}<br/>
+                  <b>VIN:</b> {}<br/>
+                  <b>Color:</b> {}<br/>
+                  <b>Miles:</b>{:,}<br/>
+                  <b>Condition:</b> {}<br/>
+                  <b>Style:</b> {}<br/>
+                  <b>Interior:</b> {}<br/>
+                  <b>List Price:</b> {}
                   </p>
         """.format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
+                   self.vehicle_vin, self.vehicle_color, self.vehicle_miles,
+                   self.vehicle_condition, self.vehicle_style,
+                   self.vehicle_interior_color, self.vehicle_list_price)
+
+        return html
+
+    def getText(self):
+        html = "Year: {} Make: {} Model: {}\n" \
+            "VIN: {}\n" \
+            "{} {} {} {} {} {}".format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
                    self.vehicle_vin, self.vehicle_color, self.vehicle_miles,
                    self.vehicle_condition, self.vehicle_style,
                    self.vehicle_interior_color, self.vehicle_list_price)

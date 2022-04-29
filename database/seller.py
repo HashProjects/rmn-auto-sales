@@ -17,3 +17,13 @@ class Seller:
 
     def __str__(self):
         return "Seller({}, {})".format(self.seller_name, self.seller_tax_id)
+
+    def getHtml(self):
+        return """<b>Name:</b> {}</b>
+          <b>Phone:</b> {}<br/>
+          <b>Address:</b><br/>
+          {}<br/>
+          {}, {} {}<br/>
+          <b>TaxID:</b> {}
+          """.format(self.seller_name, self.seller_phone, self.seller_address,
+                     self.seller_city, self.seller_state, self.seller_zip, self.seller_tax_id)

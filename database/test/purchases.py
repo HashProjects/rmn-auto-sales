@@ -20,10 +20,12 @@ seller = Seller(0, "Sam Used Car Lot", "3521 Mayberry Ave", "Phoenix", "Arizona"
 vehiclepurchase1 = VehiclePurchase(0, 0, 4000, 4000)
 vehiclepurchase1.addProblem(vehicleproblem.generateRandomProblem())
 vehiclepurchase1.addProblem(vehicleproblem.generateRandomProblem())
+vehiclepurchase1.setVehicle(newCar)
 vehiclepurchase2 = VehiclePurchase(0, 1, 5000, 5000)
 vehiclepurchase2.addProblem(vehicleproblem.generateRandomProblem())
 vehiclepurchase2.addProblem(vehicleproblem.generateRandomProblem())
 vehiclepurchase2.addProblem(vehicleproblem.generateRandomProblem())
+vehiclepurchase2.setVehicle(newCar2)
 DB = Database()
 
 #try:
@@ -36,7 +38,7 @@ else:
 
 purchase = Purchase(0, "2022-04-19", seller_id, False)
 
-purchase_id = DB.purchase(purchase, [newCar, newCar2], [vehiclepurchase1, vehiclepurchase2])
+purchase_id = DB.purchase(purchase, [vehiclepurchase1, vehiclepurchase2])
 
 DB.getPurchaseReport(purchase_id)
 

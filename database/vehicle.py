@@ -60,19 +60,41 @@ class Vehicle:
 
     def getText(self):
         html = "Year: {} Make: {} Model: {}\n" \
-            "VIN: {}\n" \
-            "{} {} {} {} {} {}".format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
-                   self.vehicle_vin, self.vehicle_color, self.vehicle_miles,
-                   self.vehicle_condition, self.vehicle_style,
-                   self.vehicle_interior_color, self.vehicle_list_price)
+               "VIN: {}\n" \
+               "{} {} {} {} {} {}".format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
+                                          self.vehicle_vin, self.vehicle_color, self.vehicle_miles,
+                                          self.vehicle_condition, self.vehicle_style,
+                                          self.vehicle_interior_color, self.vehicle_list_price)
 
         return html
 
 
+realCars = {
+    "Ct200h": "Lexus",
+    "Accord": "Honda",
+    "Camry": "Toyota",
+    "LX": "Lexus",
+    "Civic": "Honda",
+    "HR-V": "Honda",
+    "CR-V": "Honda",
+    "Corolla": "Toyota",
+    "RAV4": "Toyota",
+    "Venza": "Toyota",
+    "Tacoma": "Toyota",
+    "Sienna": "Toyota",
+    "Yaris": "Toyota"
+}
+
+
 def generateRandomVehicle():
+    listModels = []
+    for k in realCars.keys():
+        listModels.append(k)
+
+    model = random.choice(listModels)
     return Vehicle(0, "{}N{}".format(random.randint(0, 178739393), random.randint(0, 30)),
-                   random.choice(["Infinity", "Toyota", "Ford", "GMC", "Honda", "Chevy"]),
-                   "Car", random.randint(2010, 2022), random.choice(["Red", "Blue", "Silver", "White", "Black"]),
+                   realCars[model],
+                   model, random.randint(2010, 2022), random.choice(["Red", "Blue", "Silver", "White", "Black"]),
                    random.randint(10000, 10000),
                    random.choice(["Good", "Fair", "Excellent"]), random.choice(["Sedan", "Van", "Coupe", "Truck"]),
-                   random.randint(40, 100) * 100, random.randint(50, 110) * 100, 0)
+                   random.randint(40, 100) * 100, random.randint(50, 110) * 100, random.randint(50, 110) * 100)

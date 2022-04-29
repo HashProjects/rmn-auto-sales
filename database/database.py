@@ -75,9 +75,17 @@ class Database:
         cursor = self.query("SELECT * FROM seller WHERE `seller_tax_id` = '{}'".format(tax_id))
         result = None
         if cursor.rowcount > 0:
-            result = cursor.fetchone()
+            result = Seller.fromNamedTuple(cursor.fetchone())
         self.closeCursor(cursor)
-        return Seller.fromNamedTuple(result)
+        return result
+
+    def getSellerById(self, seller_id):
+        cursor = self.query("SELECT * FROM seller WHERE `seller_id` = '{}'".format(seller_id))
+        result = None
+        if cursor.rowcount > 0:
+            result = Seller.fromNamedTuple(cursor.fetchone())
+        self.closeCursor(cursor)
+        return result
 
     def getPurchaseById(self, purchase_id):
         cursor = self.query("SELECT * FROM purchase WHERE `purchase_id` = '{}'".format(purchase_id))
@@ -227,12 +235,18 @@ class Database:
 
             if is_not_empty(vehicle_sold):
                 query = appendAndIfNeeded(query, needsAnd)
-                query += " `vehicle_sold` = '{}'".format(vehicle_sold)
+                isSold = 0
+                if vehicle_sold:
+                    isSold = 1
+                query += " `vehicle_sold` = {}".format(isSold)
                 needsAnd = True
 
             if is_not_empty(vehicle_repaired):
                 query = appendAndIfNeeded(query, needsAnd)
-                query += " `vehicle_repaired` = '{}'".format(vehicle_sold)
+                isRepaired = 0
+                if vehicle_repaired:
+                    isRepaired = 1
+                query += " `vehicle_repaired` = {}".format(isRepaired)
 
         print(query)
         cursor = self.query(query)
@@ -278,7 +292,7 @@ class Database:
         self.cnx.commit()
         cursor.close()
 
-    def purchase(self, purchase, vehicles, vehiclepurchases):
+    def purchase(self, purchase, vehiclepurchases):
 
         query = "INSERT into `purchase` (`purchase_date`, `seller_id`, `auction`) VALUES ('{}','{}', '{}')".format(
             purchase.purchase_date, purchase.seller_id, int(purchase.auction))
@@ -286,9 +300,17 @@ class Database:
 
         purchase_id = cursor.lastrowid
 
-        for i in range(0, len(vehicles)):
-            vehicle = vehicles[i]
-            isRepaired = len(vehiclepurchases[i].vehicle_problems) == 0
+        for i in range(0, len(vehiclepurchases)):
+            vehicle = vehiclepurchases[i].vehicle
+            isRepaired = 0
+            if len(vehiclepurchases[i].vehicle_problems) == 0:
+                isRepaired = 1
+            else:
+                isRepaired = 0
+
+            isSold = 0
+            if vehicle.vehicle_sold:
+                isSold = 1
             query = """INSERT INTO `vehicle` (`vehicle_vin`, `vehicle_make`, `vehicle_model`, `vehicle_year`, 
                     `vehicle_color`, `vehicle_miles`, `vehicle_condition`, `vehicle_style`, `vehicle_interior_color`, 
                     `vehicle_list_price`, `vehicle_sale_price`, `vehicle_sold`, `vehicle_repaired`) VALUES ('{}', '{}', '{}', '{}', '{}', 
@@ -296,7 +318,7 @@ class Database:
                 vehicle.vehicle_vin, vehicle.vehicle_make, vehicle.vehicle_model, vehicle.vehicle_year,
                 vehicle.vehicle_color,
                 vehicle.vehicle_miles, vehicle.vehicle_condition, vehicle.vehicle_style, vehicle.vehicle_interior_color,
-                vehicle.vehicle_list_price, vehicle.vehicle_sale_price, vehicle.vehicle_sold, isRepaired)
+                vehicle.vehicle_list_price, vehicle.vehicle_sale_price, isSold, isRepaired)
             cursor = self.query(query)
             vehicle_id = cursor.lastrowid
 
@@ -379,6 +401,9 @@ class Database:
     def getPurchaseReport(self, purchase_id):
         purchase = self.getPurchaseById(purchase_id)
 
+        seller = self.getSellerById(purchase.seller_id)
+        purchase.setSeller(seller)
+
         vehiclepurchases = self.getVehiclePurchases(purchase_id)
 
         print(purchase)
@@ -386,11 +411,16 @@ class Database:
         for vp in vehiclepurchases:
             print(vp)
             vehicle = self.getVehicleById(vp.vehicle_id)
+            vp.setVehicle(vehicle)
             print("  ", vehicle)
 
             problems = self.getVehicleProblems(purchase.purchase_id, vp.vehicle_id)
+            vp.setVehicleProblems(problems)
             for problem in problems:
                 print("    ", problem)
+
+        purchase.setVehiclesPurchases(vehiclepurchases)
+        return purchase
 
     def getWarrantyItemByName(self, warrantyItemName):
         cursor = self.query("SELECT * FROM warranty_item WHERE `item_description` = '{}'".format(warrantyItemName))

@@ -11,10 +11,17 @@ class VehiclePurchase:
         self.price_paid = price_paid
 
         self.vehicle_problems = []
+        self.vehicle = None
 
     def addProblem(self, problem):
         self.vehicle_problems.append(problem)
 
+    def setVehicleProblems(self, problems):
+        self.vehicle_problems = problems
+
     def __str__(self):
         return "VehiclePurchase({}, {}, {})".format(self.vehicle_id, self.book_price, self.price_paid)
+
+    def setVehicle(self, newVehicle):
+        self.vehicle = newVehicle
 

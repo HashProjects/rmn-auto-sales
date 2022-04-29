@@ -20,6 +20,8 @@ from ui.VehicleSearch import vehicle_search
 from ui.VehicleSearch.vehicle_search import VehicleSearchForm
 
 DB = database.Database()
+vehicle_sold = False
+vehicle_repaired = True
 
 
 def main(*args):
@@ -71,7 +73,9 @@ def do_vehicle_search(*args):
     db = Database()
     results = db.searchVehicles(vehicle_year=_w2.yearValue.get(),
                                 vehicle_make=_w2.makeValue.get(),
-                                vehicle_color=_w2.colorValue.get())
+                                vehicle_color=_w2.colorValue.get(),
+                                vehicle_sold=False,
+                                vehicle_repaired=True)
 
     count = _w2.Custom1.get_total_rows()
     for i in range(count-1, -1, -1):
@@ -161,10 +165,15 @@ def initialise_custom_widget():
 
 callback = None
 
-def selectVehicle(vehicleCallback):
+def selectVehicle(vehicleCallback, vehicleSold=False, vehicleRepaired=True):
     global callback
+    global vehicle_repaired
+    global vehicle_sold
     callback = vehicleCallback
+    vehicle_repaired = vehicleRepaired
+    vehicle_sold = vehicleSold
     start()
+
 
 if __name__ == '__main__':
     vehicle_search.start_up()

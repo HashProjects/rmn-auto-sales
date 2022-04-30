@@ -1,0 +1,32 @@
+PAGE
+    Toplevel: Warranty Sale Form
+        Label: WarrantySales  
+        Label: SalesPerson  
+        Label: Customer  
+        Label: Vehicle  
+        Button: Submit   command: Submit
+        Label: WarrantySales_1  
+        Text: VIN  
+        Text: Phone  
+        Label: Warranty1  
+        Label: StartDate  
+        Label: Length  
+        Label: Cost  
+        Label: Deductible  
+        Label: One  
+        Entry: StartDateEntry  
+        Entry: LengthEntry  
+        Entry: CostEntry  
+        Entry: DeductibleEntry  
+        Label: ItemsCovered  
+        Button: AddItem   command: AddItem
+        Button: AddWarranty   command: AddWarranty
+        Button: SubmitBottom   command: SubmitBottom
+        TCombobox: SalesPersonTCombobox  
+        TCombobox: VehicleTCombobox  
+        TCombobox: CustomerTCombobox  
+        TCombobox: Items1TCombobox  
+        Scrolledlistbox: AddItemScrolledlistbox  
+            Listbox
+        Custom: AddWarrantyCustom  
+

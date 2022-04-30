@@ -5,7 +5,9 @@
 #  in conjunction with Tcl version 8.6
 #    Apr 13, 2022 12:49:44 PM PDT  platform: Linux
 #    Apr 14, 2022 09:14:02 AM PDT  platform: Linux
-
+#    Apr 29, 2022 03:14:55 PM PDT  platform: Linux
+#    Apr 29, 2022 03:22:55 PM PDT  platform: Linux
+import subprocess
 import sys
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -32,6 +34,7 @@ def button_click_purchase_car(*args):
         print('another arg:', arg)
     sys.stdout.flush()
     print("do something cool here")
+    subprocess.call(["python3", "./ui/CarPurchaseForm/CarPurchaseForm.py"])
 
 Custom = tksheet.Sheet  # To be updated by user with name of custom widget.
 
@@ -40,9 +43,34 @@ def button_vehicle_search(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
-    global _top2, _w2
-    _top2 = tk.Toplevel(root)
-    _w2 = rmn_auto_sales.vehicle_search(_top2)
+    subprocess.call(["python3", "./ui/VehicleSearch/vehicle_search.py"])
+
+def make_payment(*args):
+    print('rmn_auto_sales_support.make_payment')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+
+def repair_vehicle(*args):
+    print('rmn_auto_sales_support.repair_vehicle')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+    subprocess.call(["python3", "./ui/VehicleRepair/vehicle_repair.py"])
+
+def sell_vehicle(*args):
+    print('rmn_auto_sales_support.sell_vehicle')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+    subprocess.call(["python3", "./ui/CarSaleForm/CarSaleForm.py"])
+
+
+def sell_warranty(*args):
+    print('rmn_auto_sales_support.sell_warranty')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     rmn_auto_sales.start_up()

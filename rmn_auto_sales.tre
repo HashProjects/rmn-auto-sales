@@ -1,0 +1,8 @@
+PAGE
+    Toplevel: RMN Auto Sales - Home
+        Button: purchase_car_button   command: button_click_purchase_car
+        Button: sell_car_button  
+        Button: sell_warranty_button  
+        Menu Bar
+        Button: purchase_car_button_1   command: button_vehicle_search
+

@@ -154,8 +154,14 @@ class Database:
         self.closeCursor(cursor)
         return result
 
-    def searchWarrantyItems(self, item_description=None):
+    def searchWarrantyItems(self, item_id=None, item_description=None):
         query = "SELECT * FROM warranty_item"
+
+        if is_not_empty(item_id):
+            # add where clauses
+            query += " WHERE "
+            if item_id is not None:
+                query += " `item_id` = '{}'".format(item_id)
 
         if is_not_empty(item_description):
             # add where clauses
@@ -258,8 +264,8 @@ class Database:
 
     def insertCustomer(self, customer):
         query = """INSERT INTO `customer` (customer_phone, customer_last_name, customer_first_name, customer_address, 
-        customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{
-        }', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
+        customer_city, customer_state, customer_zip, customer_gender, customer_dob, customer_taxpayer_id) VALUES ('{}', 
+        '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')""".format(
             customer.customer_phone, customer.customer_last_name,
             customer.customer_first_name, customer.customer_address, customer.customer_city,
             customer.customer_state, customer.customer_zip, customer.customer_gender,
@@ -364,7 +370,8 @@ class Database:
         return result
 
     def getRemainingVehicleProblems(self, vehicle_id):
-        query = "SELECT * from vehicle_problems WHERE vehicle_id ='{}' AND `actual_repair_cost` is NULL".format(vehicle_id)
+        query = "SELECT * from vehicle_problems WHERE vehicle_id ='{}' AND `actual_repair_cost` is NULL".format(
+            vehicle_id)
         cursor = self.query(query)
         result = []
         if cursor.rowcount:
@@ -462,7 +469,6 @@ class Database:
             customer_id = cursor.lastrowid
         else:
             customer_id = Customer.fromNamedTuple(cursor.fetchone()).customer_id
-
 
         cursor.close()
 
@@ -588,6 +594,7 @@ class Database:
         customer = self.getCustomerById(warrantySale.customer_id)
 
         salesPerson = self.getSalesPersonById(warrantySale.salesperson_id)
+        warrantySale.setItems(vehicle, customer, salesPerson)
 
         print(warrantySale)
         print("  ", vehicle)
@@ -596,12 +603,20 @@ class Database:
 
         warranties = self.getWarrantyById(warrantySaleId)
 
+
         for warranty in warranties:
             print("    ", warranty)
 
             warrantyItems = self.getWarrantyItemList(warrantySaleId, warranty.warranty_id)
+
             for item in warrantyItems:
+
                 print("      ", item)
+                actualItems = self.searchWarrantyItems(item.item_id)
+                warranty.addWarrantyItem(actualItems[0])
+
+            warrantySale.addWarranty(warranty)
+        return warrantySale
 
     def getWarrantySaleById(self, warrantySaleId):
         cursor = self.query("SELECT * FROM warranty_sale WHERE `warranty_sale_id` = {}".format(warrantySaleId))
@@ -707,8 +722,8 @@ class Database:
         # is this payment late?
 
         if payment.payment_date < payment.payment_paid_date:
-
-            history.average_days_late = ((averageDaysLate * latePayments) + (payment.payment_paid_date - payment.payment_date).days)/ (latePayments + 1)
+            history.average_days_late = ((averageDaysLate * latePayments) + (
+                        payment.payment_paid_date - payment.payment_date).days) / (latePayments + 1)
             history.number_late_payments = latePayments + 1
 
             query = """UPDATE `payment_history` SET `number_late_payments` = '{}', average_days_late = '{}' WHERE
@@ -735,10 +750,40 @@ class Database:
 
     def getVehicleProblemById(self, problem_id, vehicle_id):
         query = "SELECT * from vehicle_problems WHERE problem_id = '{}' AND vehicle_id ='{}'".format(problem_id,
-                                                                                                      vehicle_id)
+                                                                                                     vehicle_id)
         cursor = self.query(query)
         result = None
         if cursor.rowcount:
             result = VehicleProblem.fromNamedTuple(cursor.fetchone())
         cursor.close()
         return result
+
+    def searchCustomersWithVehicles(self):
+        query = "SELECT customer.* FROM sale INNER JOIN customer ON customer.customer_id=sale.customer_id"
+        print(query)
+        cursor = self.query(query)
+        result = []
+        for sale in cursor:
+            result.append(Customer.fromNamedTuple(sale))
+        self.closeCursor(cursor)
+        return result
+
+    def getVehicleByCustomerId(self, customer_id):
+        query = """SELECT
+        rmn_auto_sales.vehicle. * FROM
+        rmn_auto_sales.sale
+        INNER
+        JOIN
+        rmn_auto_sales.vehicle
+        ON
+        sale.vehicle_id = vehicle.vehicle_id
+        WHERE
+        sale.customer_id = {}""".format(customer_id)
+        print(query)
+        cursor = self.query(query)
+        result = []
+        for sale in cursor:
+            result.append(Vehicle.fromNamedTuple(sale))
+        self.closeCursor(cursor)
+        return result
+

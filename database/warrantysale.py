@@ -36,3 +36,29 @@ class WarrantySale:
 
     def __str__(self):
         return "WarrantySale({}, {})".format(self.total_cost, self.monthly_cost)
+
+    def getHtml(self):
+        html = """
+        <h1>Warranty Sale: {}</h1>
+        <b>Date:</b> {}<br/>
+        <b>Total Cost:</b> ${:.2f}<br/>
+        <b>Monthly Cost:</b> ${:.2f}
+        <p>Sales Person:</b> {}<br/>
+        <h2>Customer Information</h2>
+        {}
+        <h2>Vehicle Information</h2>
+        {}
+        """.format(self.warranty_sale_id,
+                   self.warranty_sale_date.strftime("%m/%d/%y"),
+                   self.total_cost,
+                   self.monthly_cost,
+                   self.salesperson.salesperson_name,
+                   self.customer.getHtml(),
+                   self.vehicle.getHtml())
+        index = 1
+        for warranty in self.warranties:
+            html += "<h2>Warranty {}</h2>".format(index)
+            index += 1
+            html += warranty.getHtml()
+
+        return html

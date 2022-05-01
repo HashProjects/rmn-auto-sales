@@ -1,0 +1,20 @@
+PAGE
+    Toplevel: Add Customer Payment Form
+        Label: SelectACustomer  
+        Label: Customer  
+        Entry: Entry1  
+        Button: Submit   command: Submit
+        Label: Label1  
+        Label: PaymentDate  
+        Label: Due  
+        Label: PaidDate  
+        Label: Amount  
+        Label: BankAmount  
+        Button: AddMore  
+        Entry: PaymentDateEntry  
+        Entry: DueEntry  
+        Entry: PaidDateEntry  
+        Entry: AmountEntry  
+        Entry: BankAmountEntry  
+        Custom: Custom1  
+

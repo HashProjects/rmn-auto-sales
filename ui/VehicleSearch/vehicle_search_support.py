@@ -6,6 +6,7 @@
 #    Apr 18, 2022 12:43:43 PM PDT  platform: Linux
 #    Apr 18, 2022 12:47:19 PM PDT  platform: Linux
 #    Apr 18, 2022 12:52:15 PM PDT  platform: Linux
+#    May 02, 2022 10:51:13 AM PDT  platform: Linux
 
 import sys
 import tkinter as tk
@@ -22,7 +23,6 @@ from ui.VehicleSearch.vehicle_search import VehicleSearchForm
 DB = database.Database()
 vehicle_sold = False
 vehicle_repaired = True
-
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -51,7 +51,6 @@ def start(*args):
 
 Custom = tksheet.Sheet  # To be updated by user with name of custom widget.
 
-
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
     w = gui
@@ -64,7 +63,6 @@ def init(top, gui, *args, **kwargs):
     initialise_custom_widget()
     do_vehicle_search()
 
-
 def do_vehicle_search(*args):
     print('vehicle_search_support.do_vehicle_search')
     for arg in args:
@@ -74,6 +72,7 @@ def do_vehicle_search(*args):
     results = db.searchVehicles(vehicle_year=_w2.yearValue.get(),
                                 vehicle_make=_w2.makeValue.get(),
                                 vehicle_color=_w2.colorValue.get(),
+                                vehicle_model=_w2.modelValue.get(),
                                 vehicle_sold=False,
                                 vehicle_repaired=True)
 
@@ -103,7 +102,6 @@ def doubleClick(event):
         callback(vehicle)
     db.close()
 
-
 def formatSheet(rows):
     """ Set up various formatting options for the data grid.  """
 
@@ -123,7 +121,6 @@ def formatSheet(rows):
             if float(value) < 0:
                 w.Custom1.highlight_cells(row=row, column=5, fg='white', bg='red')
 
-
 def initialise_custom_widget():
     """
     The tksheet.Sheet class has a lot of properties and event handlers, this
@@ -140,8 +137,6 @@ def initialise_custom_widget():
 
     # Enable a subset of the built-in class event handlers. These don't need to
     # be defined here, they are included in the class.
-
-
 
     # This code has an error
     w.Custom1.enable_bindings(
@@ -162,7 +157,6 @@ def initialise_custom_widget():
     # Additional event handlers that require a local definition.
     # w.Custom1.extra_bindings([('cell_select', cell_select)])
 
-
 callback = None
 
 def selectVehicle(vehicleCallback, vehicleSold=False, vehicleRepaired=True):
@@ -174,6 +168,22 @@ def selectVehicle(vehicleCallback, vehicleSold=False, vehicleRepaired=True):
     vehicle_sold = vehicleSold
     start()
 
+def clearButtonClick(*args):
+    print('vehicle_search_support.clearButtonClick')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+    _w2.modelValue.set("")
+    _w2.yearValue.set("")
+    _w2.makeValue.set("")
+    _w2.milesValue.set("")
+    _w2.colorValue.set("")
+    do_vehicle_search()
 
 if __name__ == '__main__':
     vehicle_search.start_up()
+
+
+
+
+

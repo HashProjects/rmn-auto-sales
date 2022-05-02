@@ -50,6 +50,7 @@ def make_payment(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
+    subprocess.call(["python3", "./ui/AddCustomerPaymentForm/AddCustomerPaymentForm.py"])
 
 def repair_vehicle(*args):
     print('rmn_auto_sales_support.repair_vehicle')
@@ -71,6 +72,7 @@ def sell_warranty(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
+    subprocess.call(["python3", "./ui/WarrantySaleForm/WarrantySaleForm.py"])
 
 if __name__ == '__main__':
     rmn_auto_sales.start_up()

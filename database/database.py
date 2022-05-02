@@ -707,6 +707,7 @@ class Database:
             payment.payment_paid_date,
             payment.payment_amount, payment.payment_bank_account)
 
+        print(query)
         cursor = self.query(query)
         payment_id = cursor.lastrowid
 
@@ -742,11 +743,14 @@ class Database:
 
     def getPaymentHistoryReport(self, customer_id):
         history = self.getPaymentInfoByCustomerId(customer_id)
+        customer = self.getCustomerById(customer_id)
         print(history)
         payments = self.getPayments(customer_id)
+        history.setPayments(payments)
+        history.setCustomer(customer)
         for payment in payments:
             print(payment)
-        pass
+        return history
 
     def getVehicleProblemById(self, problem_id, vehicle_id):
         query = "SELECT * from vehicle_problems WHERE problem_id = '{}' AND vehicle_id ='{}'".format(problem_id,

@@ -19,11 +19,8 @@ class PaymentHistory:
     def __str__(self):
         return "PaymentHistory({}: late: {} average: {})".format(self.customer_id, self.number_late_payments,
                                                                  self.average_days_late)
-
-    def getHtml(self):
-        html = "<h1>Payment History</h1>"
-
-        html += """
+    def getHtmlHeader(self):
+        html = """
                 <p><b>Customer:</b> {} {} <b>Gender:</b> {} <b>DOB:</b> {} <b>Tax Payer ID:</b> {}</p>
                 <b>Late Payments:</b> {}<br/>
                 <b>Average Days Late:</b> {}
@@ -31,6 +28,12 @@ class PaymentHistory:
                            self.customer.customer_gender,
                            self.customer.customer_dob, self.customer.customer_taxpayer_id,
                            self.number_late_payments, self.average_days_late)
+        return html
+
+    def getHtml(self):
+        html = "<h1>Payment History</h1>"
+
+        html += self.getHtmlHeader()
 
         html += "<pre>"
         html += """{:14} {:12} {:10} {:10} {:5} {:12}\n""".format("Payment Date", "Amount Due", "Paid Date", "Amount",

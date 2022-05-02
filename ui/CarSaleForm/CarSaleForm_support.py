@@ -53,8 +53,6 @@ def init():
     for sp in results:
         value_list.append(sp.salesperson_id)
 
-    _w1.SalespersonSpinbox.configure(values=value_list)
-
     # set date
     _w1.dateValue.set(datetime.date.today())
     _w1.totalDueValue.set("8000")

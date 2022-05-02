@@ -10,7 +10,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-import vehicle_search_support
+from ui.VehicleSearch import vehicle_search_support
 
 class VehicleSearchForm:
     def __init__(self, top=None):

@@ -254,8 +254,9 @@ def AddWarranty(*args):
 
     averageLength = averageLength / len(warranties)
     _w1.totalCostValue.set(totalCost)
-    _w1.monthlyCostValue.set(totalCost / averageLength / 12)
+    _w1.monthlyCostValue.set("{:.2f}".format(totalCost / averageLength / 12))
     updateView()
+    _w1.warrantyTitleValue.set("Warranty {}".format(len(warranties)+1))
 
 
 def Submit(*args):

@@ -691,7 +691,10 @@ class Database:
                 latePayments += 1
                 daysLate += (p.payment_paid_date - p.payment_date).days
         totalPayments = cursor.rowcount
-        averageDaysLate = daysLate // latePayments
+        if latePayments != 0:
+            averageDaysLate = daysLate // latePayments
+        else:
+            averageDaysLate = 0
 
         # we need to skip this insert if the customer exists
         query = """
@@ -744,8 +747,12 @@ class Database:
         customer = self.getCustomerById(customer_id)
         print(history)
         payments = self.getPayments(customer_id)
-        history.setPayments(payments)
-        history.setCustomer(customer)
+        if history:
+            history.setPayments(payments)
+            history.setCustomer(customer)
+        else:
+            history = PaymentHistory(customer_id, 0, 0)
+            history.setCustomer(customer)
         for payment in payments:
             print(payment)
         return history

@@ -21,9 +21,10 @@ class PaymentHistory:
                                                                  self.average_days_late)
     def getHtmlHeader(self):
         html = """
-                <p><b>Customer:</b> {} {} <b>Gender:</b> {} <b>DOB:</b> {} <b>Tax Payer ID:</b> {}</p>
-                <b>Late Payments:</b> {}<br/>
-                <b>Average Days Late:</b> {}
+        
+                <p style="font-size: 12px;"><b>Customer:</b> {} {} <b>Gender:</b> {} <br/><b>DOB:</b> {} <b>Tax Payer ID:</b> {}</p>
+                <p style="font-size: 12px;"><b>Late Payments:</b> {}<br/>
+                <b>Average Days Late:</b> {}</p>
                 """.format(self.customer.customer_first_name, self.customer.customer_last_name,
                            self.customer.customer_gender,
                            self.customer.customer_dob, self.customer.customer_taxpayer_id,

@@ -63,12 +63,17 @@ def init(top, gui, *args, **kwargs):
     initialise_custom_widget()
     do_vehicle_search()
     clearCurrentProblem()
+    _w2.Custom1.bind("<Double-Button-1>", doubleClick)
+    _w2.Custom2.bind("<Double-Button-1>", doubleClickProblem)
 
 def do_vehicle_search(*args):
     print('vehicle_search_support.do_vehicle_search')
     for arg in args:
         print('another arg:', arg)
     sys.stdout.flush()
+    updateVehicleList()
+
+def updateVehicleList():
     db = Database()
     results = db.searchVehicles(vehicle_year=_w2.yearValue.get(),
                                 vehicle_make=_w2.makeValue.get(),
@@ -86,9 +91,6 @@ def do_vehicle_search(*args):
                                 car.vehicle_model, car.vehicle_color, car.vehicle_condition],
                                redraw=True)
     _w2.Custom1.set_all_column_widths()
-
-    _w2.Custom1.bind("<Double-Button-1>", doubleClick)
-    _w2.Custom2.bind("<Double-Button-1>", doubleClickProblem)
     db.close()
 
 def doubleClick(event):
@@ -246,6 +248,7 @@ def repair_vehicle(*args):
     db.close()
     showRemainingProblems(remainingProblems)
     clearCurrentProblem()
+    updateVehicleList()
 
 def clearCurrentProblem():
     global problemData

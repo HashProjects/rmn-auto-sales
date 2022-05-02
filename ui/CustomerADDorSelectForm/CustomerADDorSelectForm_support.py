@@ -5,18 +5,19 @@
 #  in conjunction with Tcl version 8.6
 #    Apr 15, 2022 07:25:54 PM PDT  platform: Windows NT
 #    Apr 27, 2022 10:54:56 AM PDT  platform: Linux
+#    May 02, 2022 06:44:26 AM PDT  platform: Linux
 
 import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-from database.customer import Customer
+from database.customer import Customer, generateRandomCustomer
 from database.database import Database
 from ui.CustomerADDorSelectForm import CustomerADDorSelectForm
 
 customer = None
-
+topLevel = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -30,6 +31,18 @@ def main(*args):
     _w1 = CustomerADDorSelectForm.SelectCustomerForm(_top1)
     root.mainloop()
 
+def start(*args):
+    '''Main entry point for the application.'''
+    global topLevel
+    topLevel = tk.Toplevel()
+    topLevel.protocol('WM_DELETE_WINDOW', topLevel.destroy)
+    # Creates a toplevel widget.
+    global _top1, _w1
+    _top1 = topLevel
+    _w1 = CustomerADDorSelectForm.SelectCustomerForm(_top1)
+    if len(args) and args[0] is not None:
+        showCustomer(args[0])
+    topLevel.mainloop()
 
 def AddNewCustomer(*args):
     print('CustomerADDorSelectForm_support.AddNewCustomer')
@@ -51,7 +64,10 @@ def AddNewCustomer(*args):
                         _w1.TaxIDText.get("1.0", "end-1c"),
                         )
     callback(customer)
-    root.destroy()
+    if topLevel:
+        topLevel.destroy()
+    else:
+        root.destroy()
 
 def Search(*args):
     print('CustomerADDorSelectForm_support.Search')
@@ -69,33 +85,54 @@ def Search(*args):
     if results is not None:
         global customer
         customer = results[0]
-        _w1.PhoneText.delete("1.0", "end-1c")
-        _w1.LastNameText.delete("1.0", "end-1c")
-        _w1.FirstNameText.delete("1.0", "end-1c")
-        _w1.AddressText.delete("1.0", "end-1c")
-        _w1.CityText.delete("1.0", "end-1c")
-        _w1.StateText.delete("1.0", "end-1c")
-        _w1.ZipText.delete("1.0", "end-1c")
-        _w1.GenderText.delete("1.0", "end-1c")
-        _w1.DOBText.delete("1.0", "end-1c")
-        _w1.TaxIDText.delete("1.0", "end-1c")
-        _w1.PhoneText.delete("1.0", "end-1c")
-        _w1.LastNameText.insert("1.0", customer.customer_last_name)
-        _w1.FirstNameText.insert("1.0",customer.customer_first_name)
-        _w1.AddressText.insert("1.0",customer.customer_address)
-        _w1.CityText.insert("1.0",customer.customer_city)
-        _w1.StateText.insert("1.0",customer.customer_state)
-        _w1.ZipText.insert("1.0",customer.customer_zip)
-        _w1.GenderText.insert("1.0",customer.customer_gender)
-        _w1.DOBText.insert("1.0",customer.customer_dob)
-        _w1.TaxIDText.insert("1.0",customer.customer_taxpayer_id)
-        _w1.PhoneText.insert("1.0",customer.customer_phone)
+        showCustomer(customer)
+
+
+def showCustomer(customer):
+    _w1.PhoneText.delete("1.0", "end-1c")
+    _w1.LastNameText.delete("1.0", "end-1c")
+    _w1.FirstNameText.delete("1.0", "end-1c")
+    _w1.AddressText.delete("1.0", "end-1c")
+    _w1.CityText.delete("1.0", "end-1c")
+    _w1.StateText.delete("1.0", "end-1c")
+    _w1.ZipText.delete("1.0", "end-1c")
+    _w1.GenderText.delete("1.0", "end-1c")
+    _w1.DOBText.delete("1.0", "end-1c")
+    _w1.TaxIDText.delete("1.0", "end-1c")
+    _w1.PhoneText.delete("1.0", "end-1c")
+    _w1.LastNameText.insert("1.0", customer.customer_last_name)
+    _w1.FirstNameText.insert("1.0", customer.customer_first_name)
+    _w1.AddressText.insert("1.0", customer.customer_address)
+    _w1.CityText.insert("1.0", customer.customer_city)
+    _w1.StateText.insert("1.0", customer.customer_state)
+    _w1.ZipText.insert("1.0", customer.customer_zip)
+    _w1.GenderText.insert("1.0", customer.customer_gender)
+    _w1.DOBText.insert("1.0", customer.customer_dob)
+    _w1.TaxIDText.insert("1.0", customer.customer_taxpayer_id)
+    _w1.PhoneText.insert("1.0", customer.customer_phone)
+
 
 callback = None
-def selectCustomer(customerCallback):
+def selectCustomer(customerCallback, currentCustomer):
     global callback
     callback = customerCallback
-    CustomerADDorSelectForm.start_up()
+    #CustomerADDorSelectForm.start_up()
+    start(currentCustomer)
+
+def randomButton(*args):
+    print('CustomerADDorSelectForm_support.randomButton')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+
+    customerDemo = generateRandomCustomer()
+    showCustomer(customerDemo)
+
 
 if __name__ == '__main__':
     CustomerADDorSelectForm.start_up()
+
+
+
+
+

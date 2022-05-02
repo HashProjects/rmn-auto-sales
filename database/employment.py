@@ -34,18 +34,18 @@ class CustomerEmployment:
         return "{} {}: {}, {}\n".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
 
     def getHtml(self):
-        return "{:14} {:16} {:16} {:14}\n".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
+        return "{:14} {:24} {:16} {:14}\n".format(self.title, self.employer, self.supervisor, self.supervisor_phone)
 
 
 def generateRandomEmployment(customer):
     return CustomerEmployment(0,
                               customer.customer_id,
-                              random.choice(["3M", "Avery Denison", "Josephine Crab Shack", "Home Depot", "Lowes"]),
+                              random.choice(["3M", "Avery Denison", "Josephine Crab Shack", "Home Depot", "Lowes", "Orange County School"]),
                               random.choice(["Janitor", "Teacher", "Engineer", "Professor"]),
                               random.choice(
                                   ["Smith", "Nyugen", "Biden", "Trump", "Harris", "Newsome", "Johnson"]) + ", " +
                               random.choice(
-                                  ["Donald", "Joe", "Kamala", "Ted", "Loan", "Gavin", "Eric", "Mohit", "Sammy"]),
+                                  ["Don", "Joe", "Kammy", "Ted", "Loan", "Gavin", "Eric", "Mohit", "Sammy", "Lizet"]),
                               "{}-{}-{}".format(random.randint(100, 1000), random.randint(10, 100),
                                                 random.randint(1000, 10000)),
                               "{} {} {}".format(random.randint(1000, 100000), random.choice(

@@ -603,14 +603,12 @@ class Database:
 
         warranties = self.getWarrantyById(warrantySaleId)
 
-
         for warranty in warranties:
             print("    ", warranty)
 
             warrantyItems = self.getWarrantyItemList(warrantySaleId, warranty.warranty_id)
 
             for item in warrantyItems:
-
                 print("      ", item)
                 actualItems = self.searchWarrantyItems(item.item_id)
                 warranty.addWarrantyItem(actualItems[0])
@@ -724,7 +722,7 @@ class Database:
 
         if payment.payment_date < payment.payment_paid_date:
             history.average_days_late = ((averageDaysLate * latePayments) + (
-                        payment.payment_paid_date - payment.payment_date).days) / (latePayments + 1)
+                    payment.payment_paid_date - payment.payment_date).days) / (latePayments + 1)
             history.number_late_payments = latePayments + 1
 
             query = """UPDATE `payment_history` SET `number_late_payments` = '{}', average_days_late = '{}' WHERE
@@ -791,3 +789,10 @@ class Database:
         self.closeCursor(cursor)
         return result
 
+    def searchSellers(self):
+        cursor = self.query("SELECT * FROM seller")
+        results = []
+        for seller in cursor:
+            results.append(Seller.fromNamedTuple(seller))
+        self.closeCursor(cursor)
+        return results

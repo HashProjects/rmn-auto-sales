@@ -29,6 +29,8 @@ from ui.generic_report import generic_report_support
 employment_history = []
 customerData = None
 vehicleData = None
+salesPeople = []
+currentSalesPerson = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -60,7 +62,25 @@ def init():
     _w1.commissionValue.set("1000")
     _w1.financedAmount.set("3000")
 
+    global salesPeople
+    salesPeople = db.searchSalesPeople()
+
+    salesNames = []
+    for name in salesPeople:
+        salesNames.append(name.salesperson_name)
+
+    _w1.SalesPersonComboBox["values"] = salesNames
+    _w1.SalesPersonComboBox.bind('<<ComboboxSelected>>', selectSalesPerson)
     db.close()
+
+def selectSalesPerson(event):
+    print("selected")
+    global currentSalesPerson
+    currentSalesPerson = salesPeople[_w1.SalesPersonComboBox.current()]
+    updateView()
+
+def updateView():
+    pass
 
 def AddWorkHistory(*args):
     print('CarSaleForm_support.AddWorkHistory')
@@ -74,8 +94,8 @@ def addEmployer(employment):
     print (employment)
     # display
 
-    html = "<pre>"
-    html += "{:14} {:16} {:16} {:14}\n".format("Title", "Employer", "Supervisor", "Phone")
+    html = """<pre style="font-size: 10px">"""
+    html += "{:14} {:24} {:16} {:14}\n".format("Title", "Employer", "Supervisor", "Phone")
     for employment in employment_history:
         html += employment.getHtml()
     _w1.Custom1.set_html(html + "</pre>")
@@ -92,7 +112,7 @@ def SelectCustomer(*args):
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
-    CustomerADDorSelectForm_support.selectCustomer(customerSelected)
+    CustomerADDorSelectForm_support.selectCustomer(customerSelected, customerData)
 
 def customerSelected(customer):
     print("customer selected:", customer)
@@ -126,7 +146,7 @@ def Submit(*args):
                        _w1.totalDueValue.get(),
                        _w1.downPaymentValue.get(),
                        _w1.financedAmount.get(),
-                       _w1.SalespersonSpinbox.get(),
+                       currentSalesPerson.salesperson_id,
                        _w1.commissionValue.get(),
                        vehicleData.vehicle_id,
                        customerData.customer_id)

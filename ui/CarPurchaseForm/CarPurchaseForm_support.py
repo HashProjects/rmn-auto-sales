@@ -6,6 +6,7 @@
 #    Apr 23, 2022 03:37:45 PM PDT  platform: Windows NT
 #    Apr 28, 2022 04:37:59 PM PDT  platform: Linux
 #    Apr 28, 2022 04:47:32 PM PDT  platform: Linux
+#    May 02, 2022 09:59:00 AM PDT  platform: Linux
 import datetime
 import random
 import sys
@@ -23,6 +24,8 @@ from database.vehicle import Vehicle
 from database.vehiclepurchase import VehiclePurchase
 from ui.generic_report import generic_report_support
 
+sellers = []
+currentSeller = None
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -38,7 +41,6 @@ def main(*args):
 
     root.mainloop()
 
-
 def init(top, gui, *args, **kwargs):
     global w, top_level, root
     w = gui
@@ -47,10 +49,31 @@ def init(top, gui, *args, **kwargs):
 
     # w.lblCellValue.config(text='')
     gui.dateValue.set(datetime.date.today().strftime("%m/%d/%y"))
+    db = Database()
+    global sellers
+    sellers = db.searchSellers()
 
+    sellerNames = []
+    for name in sellers:
+        sellerNames.append(name.seller_name)
+    gui.SellerComboBox["values"] = sellerNames
+    gui.SellerComboBox.bind('<<ComboboxSelected>>', selectSeller)
+
+    db.close()
     # Call a separate function to initialise the sheet (data grid) widget.
     initialise_custom_widget()
 
+def selectSeller(event):
+    print("selected")
+    global currentSeller
+    currentSeller = sellers[_w1.SellerComboBox.current()]
+    _w1.taxIDValue.set(currentSeller.seller_tax_id)
+    _w1.locationValue.set(currentSeller.seller_city)
+
+    updateView()
+
+def updateView():
+    pass
 
 def initialise_custom_widget():
     """
@@ -108,7 +131,6 @@ def initialise_custom_widget():
     # Additional event handlers that require a local definition.
     # w.Custom1.extra_bindings([('cell_select', cell_select)])
 
-
 def AddVehicle(*args):
     print('CarPurchaseForm_support.AddVehicle')
     for arg in args:
@@ -138,8 +160,8 @@ def AddVehicle(*args):
     allVehiclePurchases.append(newVehiclePurchase)
 
     updateVehicleList(allVehiclePurchases)
-
-
+    clear()
+    _w1.vehicleTitleValue.set("Vehicle {}".format(len(allVehiclePurchases)+1))
 
 def updateVehicleList(vehiclesPurchased):
     count = _w1.Custom2.get_total_rows()
@@ -158,7 +180,6 @@ def updateVehicleList(vehiclesPurchased):
                                redraw=True)
     _w1.Custom2.set_all_column_widths()
 
-
 def Submit(*args):
     print('CarPurchaseForm_support.Submit')
     for arg in args:
@@ -175,13 +196,11 @@ def Submit(*args):
 
     generic_report_support.displayReport(result.getHtml(), "Car Purchase Report")
 
-
 Custom = tksheet.Sheet
 
 currentProblems = []
 currentVehicle = None
 allVehiclePurchases = []
-
 
 def randomData(*args):
     print('CarPurchaseForm_support.randomData')
@@ -208,7 +227,6 @@ def randomData(*args):
     global currentVehicle
     currentVehicle = newVehicle
 
-
 def displayVehicleProblems(vehicleProblems):
     count = _w1.Custom3.get_total_rows()
     for i in range(count - 1, -1, -1):
@@ -219,7 +237,6 @@ def displayVehicleProblems(vehicleProblems):
         _w1.Custom3.insert_row([problem.problem_id, problem.problem_description, problem.estimated_repair_cost],
                                redraw=True)
     _w1.Custom3.set_all_column_widths()
-
 
 def displayVehicle(newVehicle):
     _w1.makeValue.set(newVehicle.vehicle_make)
@@ -236,6 +253,35 @@ def displayVehicle(newVehicle):
     _w1.bookValue.set(newVehicle.vehicle_sale_price)
     _w1.pricePaidValue.set(newVehicle.vehicle_sale_price)
 
+def clear():
+    _w1.makeValue.set("")
+    _w1.modleValue.set("")
+    _w1.yearValue.set("")
+    _w1.conditionValue.set("")
+    _w1.colorValue.set("")
+    _w1.vinValue.set("")
+    _w1.milesValue.set("")
+    _w1.listPriceValue.set("")
+    _w1.salePriceValue.set("")
+    _w1.styleValue.set("")
+    _w1.interiorValue.set("")
+    _w1.bookValue.set("")
+    _w1.pricePaidValue.set("")
+    count = _w1.Custom3.get_total_rows()
+    for i in range(count - 1, -1, -1):
+        _w1.Custom3.delete_row(i)
+
+
+def addProblem(*args):
+    print('CarPurchaseForm_support.addProblem')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
 
 if __name__ == '__main__':
     CarPurchaseForm.start_up()
+
+
+
+
+

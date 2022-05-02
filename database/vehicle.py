@@ -61,7 +61,7 @@ class Vehicle:
     def getText(self):
         html = "Year: {} Make: {} Model: {}\n" \
                "VIN: {}\n" \
-               "{} {} {} {} {} {}".format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
+               "Color: {} \nMiles: {:,}\n Condition: {}\n Style: {}\n Interior: {}\n List:{}".format(self.vehicle_year, self.vehicle_make, self.vehicle_model,
                                           self.vehicle_vin, self.vehicle_color, self.vehicle_miles,
                                           self.vehicle_condition, self.vehicle_style,
                                           self.vehicle_interior_color, self.vehicle_list_price)
@@ -82,7 +82,11 @@ realCars = {
     "Venza": "Toyota",
     "Tacoma": "Toyota",
     "Sienna": "Toyota",
-    "Yaris": "Toyota"
+    "Yaris": "Toyota",
+    "Blazer": "Chevy",
+    "Mustang": "Ford",
+    "Astro": "Chevy",
+    "Q30": "Infinity"
 }
 
 
@@ -94,7 +98,10 @@ def generateRandomVehicle():
     model = random.choice(listModels)
     return Vehicle(0, "{}N{}".format(random.randint(0, 178739393), random.randint(0, 30)),
                    realCars[model],
-                   model, random.randint(2010, 2022), random.choice(["Red", "Blue", "Silver", "White", "Black"]),
+                   model, random.randint(2010, 2022),
+                   random.choice(["Red", "Blue", "Silver", "White", "Black"]),
                    random.randint(10000, 10000),
-                   random.choice(["Good", "Fair", "Excellent"]), random.choice(["Sedan", "Van", "Coupe", "Truck"]),
+                   random.choice(["Good", "Fair", "Excellent"]),
+                   random.choice(["Sedan", "Van", "Coupe", "Truck"]),
+                   random.choice(["Brown", "Gray", "Black"]),
                    random.randint(40, 100) * 100, random.randint(50, 110) * 100, random.randint(50, 110) * 100)

@@ -36,6 +36,14 @@ class VehicleSale:
     def __str__(self):
         return "Sale({}: {})".format(self.sale_date, self.total_due)
 
+    def getEmploymentHtml(self):
+        html = """<pre style="font-size: 10px">"""
+        html += "{:14} {:24} {:16} {:14}\n".format("Title", "Employer", "Supervisor", "Phone")
+        for employment in self.customer_employment:
+            html += employment.getHtml()
+        html += "</pre>"
+        return html
+
     def getHtml(self):
         return """<h1>Vehicle Sale Report</h1>
         <b>Date</b>: {}<br/>
@@ -43,7 +51,10 @@ class VehicleSale:
         <b>Down Payment:</b> {}<br/>
         <h2>Customer Information</h2>
         {}
+        <h3>Employment History</h3>
+        {}
         <h2>Vehicle Sold</h2>
         {} 
         """.format(self.sale_date.strftime("%m/%d/%y"), self.total_due, self.down_payment, self.customer.getHtml(),
+                   self.getEmploymentHtml(),
                    self.vehicle.getHtml())

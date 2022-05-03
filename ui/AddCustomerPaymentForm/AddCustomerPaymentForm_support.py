@@ -73,20 +73,20 @@ def showPaymentHistory():
     for i in range(count - 1, -1, -1):
         _w1.Custom1.delete_row(i)
 
-    for payment in history.payments:
-        print(payment)
+    if history.payments:
+        for payment in history.payments:
+            print(payment)
 
-        _w1.Custom1.insert_row([payment.payment_date.strftime("%m/%d/%y"),
-                                "${:.2f}".format(payment.payment_amount_due),
-                                payment.payment_paid_date.strftime("%m/%d/%y"),
-                                "${:.2f}".format(payment.payment_amount),
-                                payment.payment_bank_account],
-                               redraw=True)
+            _w1.Custom1.insert_row([payment.payment_date.strftime("%m/%d/%y"),
+                                    "${:.2f}".format(payment.payment_amount_due),
+                                    payment.payment_paid_date.strftime("%m/%d/%y"),
+                                    "${:.2f}".format(payment.payment_amount),
+                                    payment.payment_bank_account],
+                                   redraw=True)
+        lastPayment = history.payments[-1]
+        _w1.bankAccountValue.set(lastPayment.payment_bank_account)
 
     _w1.Custom1.set_all_column_widths()
-
-    lastPayment = history.payments[-1]
-    _w1.bankAccountValue.set(lastPayment.payment_bank_account)
 
     db.close()
 

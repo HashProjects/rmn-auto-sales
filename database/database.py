@@ -574,7 +574,7 @@ class Database:
             warranty_id = cursor.lastrowid
 
             for j in range(0, len(warranty.warranty_item_list)):
-                warranty_item_list = warranty.warranty_item_list[i]
+                warranty_item_list = warranty.warranty_item_list[j]
                 employmentIndex += 1
                 query = """INSERT INTO `warranty_item_list` (warranty_sale_id, warranty_id, item_id) 
                 VALUES ('{}', '{}', '{}')""".format(

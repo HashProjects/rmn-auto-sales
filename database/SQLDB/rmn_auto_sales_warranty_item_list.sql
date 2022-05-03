@@ -23,14 +23,12 @@ DROP TABLE IF EXISTS `warranty_item_list`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `warranty_item_list` (
-  `warranty_sale_id` int NOT NULL AUTO_INCREMENT,
-  `warranty_id` int NOT NULL,
   `item_id` int NOT NULL,
-  PRIMARY KEY (`warranty_sale_id`,`warranty_id`,`item_id`),
-  KEY `fk_warranty_id_idx` (`warranty_id`) /*!80000 INVISIBLE */,
-  KEY `fk_item_id_idx` (`item_id`) /*!80000 INVISIBLE */,
-  CONSTRAINT `fk_warranty_id` FOREIGN KEY (`warranty_id`) REFERENCES `warranty` (`warranty_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `warranty_sale_id` int NOT NULL,
+  `warranty_id` int NOT NULL,
+  PRIMARY KEY (`item_id`,`warranty_sale_id`,`warranty_id`),
+  KEY `fk_item_id_idx` (`item_id`) /*!80000 INVISIBLE */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +37,7 @@ CREATE TABLE `warranty_item_list` (
 
 LOCK TABLES `warranty_item_list` WRITE;
 /*!40000 ALTER TABLE `warranty_item_list` DISABLE KEYS */;
-INSERT INTO `warranty_item_list` VALUES (7,2,3),(8,3,3),(9,4,8),(10,5,8),(11,6,7),(12,7,7),(13,8,5),(14,9,7),(15,10,8);
+INSERT INTO `warranty_item_list` VALUES (1,17,11),(1,18,12),(1,59,55),(2,59,55),(3,7,2),(3,8,3),(3,25,19),(3,29,23),(3,32,26),(3,35,29),(3,36,30),(3,38,32),(3,40,34),(3,45,39),(3,47,41),(3,52,48),(3,53,49),(3,55,51),(3,56,52),(3,66,62),(4,42,36),(4,43,37),(4,44,38),(4,48,42),(4,54,50),(5,13,8),(5,24,18),(5,27,21),(5,30,24),(5,66,62),(7,11,6),(7,12,7),(7,14,9),(8,9,4),(8,10,5),(8,15,10),(8,23,17),(8,26,20),(8,37,31),(60,61,57),(61,61,57),(62,62,58),(63,62,58),(64,63,59),(65,63,59);
 /*!40000 ALTER TABLE `warranty_item_list` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-24 21:01:26
+-- Dump completed on 2022-05-02 17:31:54

@@ -26,8 +26,9 @@ CREATE TABLE `payment_history` (
   `customer_id` int NOT NULL AUTO_INCREMENT,
   `number_late_payments` int NOT NULL,
   `average_days_late` int DEFAULT NULL,
-  PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`customer_id`),
+  CONSTRAINT `fk_payment_history_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +37,7 @@ CREATE TABLE `payment_history` (
 
 LOCK TABLES `payment_history` WRITE;
 /*!40000 ALTER TABLE `payment_history` DISABLE KEYS */;
-INSERT INTO `payment_history` VALUES (1,0,20),(2,0,26),(3,0,30),(20,0,0),(21,0,0),(22,0,0),(23,0,0),(24,0,0),(25,0,0),(26,0,0),(29,0,0),(30,0,0);
+INSERT INTO `payment_history` VALUES (1,0,20),(2,0,26),(3,0,30),(20,0,0),(21,0,0),(22,6,1),(23,4,2),(24,1,0),(25,1,0),(26,0,0),(28,0,0),(29,0,0),(30,7,1),(48,0,0),(50,1,1);
 /*!40000 ALTER TABLE `payment_history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-04-24 21:01:26
+-- Dump completed on 2022-05-02 17:31:54

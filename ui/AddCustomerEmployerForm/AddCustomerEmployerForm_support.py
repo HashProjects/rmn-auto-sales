@@ -27,6 +27,7 @@ def main(*args):
     _w1 = AddCustomerEmployerForm.Toplevel1(_top1)
     root.mainloop()
 
+topLevel = None
 def start(*args):
     '''Main entry point for the application.'''
     global topLevel
@@ -56,6 +57,11 @@ def Submit(*args):
     global callback
     if callback is not None:
         callback(employment)
+
+    if topLevel:
+        topLevel.destroy()
+    else:
+        root.destroy()
 
 def addEmployer(newCustomer, addEmployerCallback):
     global callback

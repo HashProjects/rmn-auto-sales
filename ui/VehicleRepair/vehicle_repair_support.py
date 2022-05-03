@@ -88,7 +88,7 @@ def updateVehicleList():
     for car in results:
         print(car)
         _w2.Custom1.insert_row([car.vehicle_id, car.vehicle_year, car.vehicle_make,
-                                car.vehicle_model, car.vehicle_color, car.vehicle_condition],
+                                car.vehicle_model, car.vehicle_color, car.vehicle_vin],
                                redraw=True)
     _w2.Custom1.set_all_column_widths()
     db.close()
@@ -103,6 +103,8 @@ def doubleClick(event):
     problems = db.getRemainingVehicleProblems(rowData)
     global vehicleData
     vehicleData = db.getVehicleById(rowData)
+    _w2.vehicleProblemsTitleValue.set("Vehicle Problems - {} {} {}".format(vehicleData.vehicle_year, vehicleData.vehicle_make, vehicleData.vehicle_model))
+    print(_w2.vehicleProblemsTitleValue.get())
     showRemainingProblems(problems)
     db.close()
 
@@ -169,7 +171,6 @@ def formatSheet(rows):
             if float(value) < 0:
                 w.Custom2.highlight_cells(row=row, column=3, fg='white', bg='red')
 
-
 def initialise_custom_widget():
     """
     The tksheet.Sheet class has a lot of properties and event handlers, this
@@ -180,7 +181,7 @@ def initialise_custom_widget():
     """
 
     # global _w2
-    head = ['#', 'Year', 'Make', 'Model', 'Color', 'Condition']
+    head = ['#', 'Year', 'Make', 'Model', 'Color', 'VIN']
     # and apply them to the data grid.
     _w2.Custom1.headers(head, redraw=True)
 

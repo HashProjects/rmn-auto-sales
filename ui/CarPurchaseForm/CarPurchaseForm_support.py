@@ -187,8 +187,8 @@ def Submit(*args):
     sys.stdout.flush()
 
     db = Database()
-    seller = db.getSellerByTaxId('11-19139391')
-    purchase = Purchase(0, datetime.datetime.strptime(_w1.dateValue.get(), "%m/%d/%y"), seller.seller_id, False)
+    #seller = db.getSellerByTaxId('11-19139391')
+    purchase = Purchase(0, datetime.datetime.strptime(_w1.dateValue.get(), "%m/%d/%y"), currentSeller.seller_id, False)
 
     purchase_id = db.purchase(purchase, allVehiclePurchases)
 

@@ -92,7 +92,7 @@ def addEmployer(employment):
     print (employment)
     # display
 
-    html = """<pre style="font-size: 10px">"""
+    html = """<pre style="font-size: 8px">"""
     html += "{:14} {:24} {:16} {:14}\n".format("Title", "Employer", "Supervisor", "Phone")
     for employment in employment_history:
         html += employment.getHtml()
@@ -157,6 +157,7 @@ def Submit(*args):
     generic_report_support.displayReport(db.getSaleReport(sale_id).getHtml(), "Vehicle Sale Report")
 
     db.close()
+    root.destroy()
 
 Custom = tkhtmlview.HTMLScrolledText  # To be updated by user with name of custom widget.
 

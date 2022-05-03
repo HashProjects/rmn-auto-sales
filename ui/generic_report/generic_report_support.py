@@ -54,7 +54,7 @@ def start(*args):
     _w1 = HtmlWindow(_top1)
     _w1.Custom1.set_html(html)
     global title
-    _w1.top.title = title
+    topLevel.wm_title(title)
     topLevel.mainloop()
 
 Custom = tkhtmlview.HTMLScrolledText

@@ -32,7 +32,7 @@ CREATE TABLE `seller` (
   `seller_phone` varchar(16) NOT NULL,
   `seller_tax_id` varchar(16) NOT NULL,
   PRIMARY KEY (`seller_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `seller` (
 
 LOCK TABLES `seller` WRITE;
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
-INSERT INTO `seller` VALUES (1,'Sam Used Car Lot','3521 Mayberry Ave','Phoenix','Arizona',87469,'585-228-2292','11-19139391');
+INSERT INTO `seller` VALUES (1,'Sam Used Car Lot','3521 Mayberry Ave','Phoenix','Arizona',87469,'585-228-2292','11-19139391'),(2,'Old Cars For Sale','8938 Western Ave','Phoenix','Arizona',87469,'399-555-2929','11-83838838'),(3,'Dan Jones Preowned Vehicles','3788 Westley Ave','Los Angeles','California',90299,'999-444-2222','49-92929292');
 /*!40000 ALTER TABLE `seller` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-02 17:31:54
+-- Dump completed on 2022-05-04  9:28:18

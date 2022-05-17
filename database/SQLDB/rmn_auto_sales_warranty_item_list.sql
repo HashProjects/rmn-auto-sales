@@ -27,7 +27,9 @@ CREATE TABLE `warranty_item_list` (
   `warranty_sale_id` int NOT NULL,
   `warranty_id` int NOT NULL,
   PRIMARY KEY (`item_id`,`warranty_sale_id`,`warranty_id`),
-  KEY `fk_item_id_idx` (`item_id`) /*!80000 INVISIBLE */
+  KEY `fk_warranty_item_list_1_idx` (`warranty_id`),
+  CONSTRAINT `fk_warranty_item_list_1` FOREIGN KEY (`warranty_id`) REFERENCES `warranty` (`warranty_id`),
+  CONSTRAINT `fk_warranty_item_list_2` FOREIGN KEY (`item_id`) REFERENCES `warranty_item` (`item_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -37,7 +39,7 @@ CREATE TABLE `warranty_item_list` (
 
 LOCK TABLES `warranty_item_list` WRITE;
 /*!40000 ALTER TABLE `warranty_item_list` DISABLE KEYS */;
-INSERT INTO `warranty_item_list` VALUES (1,17,11),(1,18,12),(1,59,55),(2,59,55),(3,7,2),(3,8,3),(3,25,19),(3,29,23),(3,32,26),(3,35,29),(3,36,30),(3,38,32),(3,40,34),(3,45,39),(3,47,41),(3,52,48),(3,53,49),(3,55,51),(3,56,52),(3,66,62),(3,67,63),(4,42,36),(4,43,37),(4,44,38),(4,48,42),(4,54,50),(5,13,8),(5,24,18),(5,27,21),(5,30,24),(5,66,62),(6,67,64),(7,11,6),(7,12,7),(7,14,9),(8,9,4),(8,10,5),(8,15,10),(8,23,17),(8,26,20),(8,37,31),(60,61,57),(61,61,57),(62,62,58),(63,62,58),(64,63,59),(65,63,59);
+INSERT INTO `warranty_item_list` VALUES (3,53,49),(3,68,65),(4,68,65),(7,68,66),(3,69,67),(4,69,68),(3,70,69),(4,70,70),(3,71,71),(4,71,72),(3,72,73),(4,72,74),(3,73,75),(4,73,76),(3,74,77),(5,74,78);
 /*!40000 ALTER TABLE `warranty_item_list` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-04  9:28:18
+-- Dump completed on 2022-05-17 14:30:43

@@ -19,7 +19,7 @@ class SalesPerson:
 def generateRandomSalesPerson():
     return SalesPerson(0,
                        random.choice(["Don", "Joseph", "Gerald", "Harry", "Chan", "Fred", "Eric", "Mohit", "Nick"]) + " " +
-                       random.choice(["Smithers", "Nyugen", "Binden", "Trumpet", "Harrison", "Oldsome", "Johnson"]),
+                       random.choice(["Smithers", "Nyugen", "Binden", "Tracy", "Harrison", "Oldsome", "Johnson"]),
                        "{}-{}-{}".format(random.randint(100, 1000), random.randint(100, 1000),
                                          random.randint(1000, 10000))
                        )

@@ -803,3 +803,95 @@ class Database:
             results.append(Seller.fromNamedTuple(seller))
         self.closeCursor(cursor)
         return results
+
+    def getAnnualReport(self):
+        html = "<h1>Annual Report " + datetime.date.today().strftime("20%y") + "</h1>"
+        html += "<b>Date:</b>" + datetime.date.today().strftime("%m/%d/%y")
+
+        query = """SELECT
+        rmn_auto_sales.vehicle_purchase. * FROM
+        rmn_auto_sales.purchase
+        INNER
+        JOIN
+        rmn_auto_sales.vehicle_purchase
+        ON
+        purchase.purchase_id = vehicle_purchase.purchase_id
+        WHERE
+        purchase.purchase_date > '2022/05/02'"""
+        print(query)
+        cursor = self.query(query)
+        result = []
+        totalPurchases = 0
+
+        for vp in cursor:
+            result.append(VehiclePurchase.fromNamedTuple(vp))
+            print(vp)
+            totalPurchases += vp.price_paid
+        self.closeCursor(cursor)
+
+        query = """SELECT
+        rmn_auto_sales.vehicle_problems. * FROM
+        rmn_auto_sales.purchase
+        INNER
+        JOIN
+        rmn_auto_sales.vehicle_problems
+        ON
+        purchase.purchase_id = vehicle_problems.purchase_id
+        WHERE
+        purchase.purchase_date > '2022/04/30'"""
+        print(query)
+        cursor = self.query(query)
+        result = []
+        totalFixedProblems = 0
+
+        for vp in cursor:
+            result.append(VehicleProblem.fromNamedTuple(vp))
+            print(vp)
+            if vp.actual_repair_cost is not None:
+                totalFixedProblems += vp.actual_repair_cost
+        self.closeCursor(cursor)
+
+        query = """SELECT *
+        from sale
+        WHERE sale_date > '2022/04/30'
+        """
+        print(query)
+        cursor = self.query(query)
+        result = []
+        totalDown = 0
+
+        for vs in cursor:
+            result.append(VehicleSale.fromNamedTuple(vs))
+            print(vs)
+            totalDown += vs.down_payment
+        self.closeCursor(cursor)
+
+        query = """SELECT *
+                from payments
+                WHERE payment_date > '2022/04/30'
+                """
+        print(query)
+        cursor = self.query(query)
+        result = []
+        totalPayments = 0
+
+        for p in cursor:
+            result.append(Payment.fromNamedTuple(p))
+            print(p)
+            totalPayments += p.payment_amount
+        self.closeCursor(cursor)
+
+        html += "<pre>"
+        html += "Expenses\n-------------------------------------------\n"
+        html += "Vehicle Purchases: ${:,.2f}\n".format(totalPurchases)
+        html += "Vehicle Repairs:   ${:,.2f}\n".format(totalFixedProblems)
+        html += "Total Expenses     ${:,.2f}\n".format(totalPurchases + totalFixedProblems)
+
+        html += "\nIncome\n-------------------------------------------\n"
+        html += "Down payments:     ${:,.2f}\n".format(totalDown)
+        html += "Total payments:    ${:,.2f}\n".format(totalPayments)
+        html += "Total Income:      ${:,.2f}\n".format(totalPayments + totalDown)
+
+
+        html += "</pre>"
+        return html

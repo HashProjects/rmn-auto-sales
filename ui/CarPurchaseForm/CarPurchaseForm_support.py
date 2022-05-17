@@ -153,7 +153,7 @@ def AddVehicle(*args):
                          vehicle_list_price=_w1.listPriceValue.get(),
                          vehicle_sale_price=_w1.salePriceValue.get())
 
-    newVehiclePurchase = VehiclePurchase(0, 0, _w1.bookValue.get(), _w1.pricePaidValue.get())
+    newVehiclePurchase = VehiclePurchase(0, 0, _w1.bookValue.get(), _w1.salePriceValue.get())
     newVehiclePurchase.setVehicle(newVehicle)
     newVehiclePurchase.setVehicleProblems(currentProblems)
 
@@ -251,7 +251,7 @@ def displayVehicle(newVehicle):
     _w1.styleValue.set(newVehicle.vehicle_style)
     _w1.interiorValue.set(newVehicle.vehicle_interior_color)
     _w1.bookValue.set(newVehicle.vehicle_sale_price)
-    _w1.pricePaidValue.set(newVehicle.vehicle_sale_price)
+    #_w1.pricePaidValue.set(newVehicle.vehicle_sale_price)
 
 def clear():
     _w1.makeValue.set("")
@@ -266,7 +266,7 @@ def clear():
     _w1.styleValue.set("")
     _w1.interiorValue.set("")
     _w1.bookValue.set("")
-    _w1.pricePaidValue.set("")
+    #_w1.pricePaidValue.set("")
     count = _w1.Custom3.get_total_rows()
     for i in range(count - 1, -1, -1):
         _w1.Custom3.delete_row(i)

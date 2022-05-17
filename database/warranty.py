@@ -27,8 +27,8 @@ class Warranty:
         <b>Total Cost:</b> ${:.2f}<br/>
         <b>Deductible:</b> ${:.2f}
         <h3>Warranty Items Covered</h3>
-        """.format(self.warranty_sale_id, self.warranty_start_date.strftime("%m/%d/%y"), self.warranty_length,
-                   self.warranty_cost, self.warranty_deductable)
+        """.format(self.warranty_start_date.strftime("%m/%d/%y"), self.warranty_length,
+                   float(self.warranty_cost), float(self.warranty_deductable))
 
         html += "<pre>{:<3} {}\n".format("#", "Description")
         for item in self.warranty_item_list:

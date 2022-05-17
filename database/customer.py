@@ -53,7 +53,7 @@ def generateRandomCustomer():
     return Customer(0,
                     "{}-{}-{}".format(random.randint(100, 1000), random.randint(100, 1000),
                                       random.randint(1000, 10000)),
-                    random.choice(["Smith", "Nyugen", "Biden", "Trump", "Harris", "Newsome", "Johnson"]),
+                    random.choice(["Smith", "Nyugen", "Biden", "Bush", "Harris", "Newsome", "Johnson"]),
                     random.choice(["Donald", "Joe", "Kamala", "Ted", "Loan", "Gavin", "Eric", "Mohit", "Sammy"]),
                     "{} {} {}".format(random.randint(1000, 100000), random.choice(
                         ["Mockingbird", "Wayne Street", "Kent", "Martin Luther King Jr"]),

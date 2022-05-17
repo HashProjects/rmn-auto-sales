@@ -7,6 +7,7 @@
 #    Apr 14, 2022 09:14:02 AM PDT  platform: Linux
 #    Apr 29, 2022 03:14:55 PM PDT  platform: Linux
 #    Apr 29, 2022 03:22:55 PM PDT  platform: Linux
+#    May 17, 2022 09:36:36 AM PDT  platform: Linux
 import subprocess
 import sys
 import tkinter as tk
@@ -16,6 +17,10 @@ from tkinter.constants import *
 import tksheet
 
 import rmn_auto_sales
+from database.database import Database
+from ui import generic_report
+from ui.generic_report import generic_report_support
+
 
 def main(*args):
     '''Main entry point for the application.'''
@@ -66,13 +71,23 @@ def sell_vehicle(*args):
     sys.stdout.flush()
     subprocess.call(["python3", "./ui/CarSaleForm/CarSaleForm.py"])
 
-
 def sell_warranty(*args):
     print('rmn_auto_sales_support.sell_warranty')
     for arg in args:
         print ('another arg:', arg)
     sys.stdout.flush()
     subprocess.call(["python3", "./ui/WarrantySaleForm/WarrantySaleForm.py"])
+
+def annual_report(*args):
+    print('rmn_auto_sales_support.annual_report')
+    for arg in args:
+        print ('another arg:', arg)
+    sys.stdout.flush()
+    db = Database()
+    html = db.getAnnualReport()
+
+    generic_report_support.displayReport(html, "Annual Report")
+    db.close()
 
 if __name__ == '__main__':
     rmn_auto_sales.start_up()

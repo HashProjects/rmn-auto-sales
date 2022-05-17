@@ -43,9 +43,9 @@ def generateRandomEmployment(customer):
                               random.choice(["3M", "Avery Denison", "Josephine Crab Shack", "Home Depot", "Lowes", "Orange County School"]),
                               random.choice(["Janitor", "Teacher", "Engineer", "Professor"]),
                               random.choice(
-                                  ["Smith", "Nyugen", "Biden", "Trump", "Harris", "Newsome", "Johnson"]) + ", " +
+                                  ["Smith", "Nyugen", "Benden", "Bannon", "Harris", "Newsome", "Johnson"]) + ", " +
                               random.choice(
-                                  ["Don", "Joe", "Kammy", "Ted", "Loan", "Gavin", "Eric", "Mohit", "Sammy", "Lizet"]),
+                                  ["Don", "Joe", "Kammy", "Ted", "Loan", "Gavin", "Eric", "Brandon", "Sammy", "Lizet"]),
                               "{}-{}-{}".format(random.randint(100, 1000), random.randint(10, 100),
                                                 random.randint(1000, 10000)),
                               "{} {} {}".format(random.randint(1000, 100000), random.choice(
